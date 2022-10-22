@@ -1,0 +1,28 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+kubernetes = "==21.7.0"
+fastapi = "==0.78.0"
+pytest = "==7.1.2"
+autopep8 = "==1.6.0"
+uvicorn = {extras = ["standard"], version = "==0.17.6"}
+requests-toolbelt = "==0.9.1"
+pytz = "==2022.1"
+minio = "*"
+loguru = "*"
+redis = "*"
+elasticsearch = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+serve = "uvicorn src.main:app --reload --host=127.0.0.1 --port=8003"
+proxy = "kubectl port-forward svc/svc-tink 8003:8003"
+build = "docker buildx build -f Dockerfile --platform linux/amd64 -t mx2542/tink:1.0 . --push"
+deploy = "helm install tink chart"

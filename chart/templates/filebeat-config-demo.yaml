@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeat-config-demo
+data:
+  filebeat.yml: |
+    filebeat.inputs:
+      - type: filestream
+        backoff_factor: 1s
+        backoff.init: 1s
+        backoff.max: 10s
+        enabled: true
+        paths:
+          - /logs/${LOG_NAME}
+        tags: [demo, raw]
+        # fields_under_root: true
+        # fields:
+          # task_tag: raw
+          # task_type: ${TASK_PYPE}
+          # task_name: ${TASK_NAME}
+
+
+    output.logstash:
+      enabled: true
+      hosts: ["middleware-logstash.tink:5044"]

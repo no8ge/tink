@@ -1,0 +1,2 @@
+image: "mx2542/tink:latest"
+imagePullPolicy: Always

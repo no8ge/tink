@@ -1,0 +1,92 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: demo
+spec:
+  selector:
+    matchLabels:
+      app: hatink
+  serviceName: hat
+  replicas: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: hatink
+    spec:
+      terminationGracePeriodSeconds: 5
+      initContainers:
+        - name: boxter
+          image: mx2542/anti-boxter:latest
+          command:
+            - "python"
+            - "/cache/init-script.py"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /cache
+              name: cache-volume
+            - name: atop-init-script
+              readOnly: true
+              mountPath: /cache/init-script.py
+              subPath: init-script.py
+          env:
+            - name: SOURCE
+              value: atop
+            - name: PROJECT
+              value: demo
+      containers:
+        - name: python
+          image: python:3.9.12-slim
+          command:
+            - "bash"
+          args:
+            - "-c"
+            - "echo health > /cache/health; $(CMD); sleep infinity"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /cache
+              name: cache-volume
+          env:
+            - name: CMD
+              value: python /cache/demo/test_demo.py
+        - name: filebeat
+          image: docker.elastic.co/beats/filebeat:8.3.3
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-e"
+            - "-E"
+            - "http.enabled=true"
+          livenessProbe:
+            exec:
+              command:
+                - cat
+                - /cache/health
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          volumeMounts:
+            - name: filebeat-config-demo
+              readOnly: true
+              mountPath: /usr/share/filebeat/filebeat.yml
+              subPath: filebeat.yml
+            - mountPath: /cache
+              name: cache-volume
+      volumes:
+        - name: filebeat-config-demo
+          configMap:
+            name: filebeat-config-demo
+            items:
+              - key: filebeat.yml
+                path: filebeat.yml
+        - name: atop-init-script
+          configMap:
+            name: atop-init-script
+            items:
+              - key: init-script
+                path: init-script.py
+        - name: cache-volume
+          emptyDir: {}
+      restartPolicy: Always
+
+
+

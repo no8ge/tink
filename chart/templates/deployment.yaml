@@ -1,0 +1,54 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: tink
+  labels:
+    app: tink
+spec:
+  selector:
+    app: tink
+  ports:
+    - protocol: TCP
+      port: 8003
+      targetPort:
+        8003
+        # nodePort: 30085
+  clusterIP: None
+  # type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tink
+  labels:
+    app: tink
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tink
+  template:
+    metadata:
+      labels:
+        app: tink
+    spec:
+      containers:
+        - name: tink
+          image: {{ .Values.image }}
+          command:
+            - "uvicorn"
+          args:
+            - "src.main:app"
+            - "--reload"
+            - "--host=0.0.0.0"
+            - "--port=8003"
+          ports:
+            - containerPort: 8003
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          env:
+            - name: NAMESPACE
+              value: {{ .Release.Namespace | quote }}
+            - name: INCLUSTER
+              value: "true"

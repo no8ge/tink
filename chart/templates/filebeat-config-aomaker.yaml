@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeat-config-aomaker
+data:
+  filebeat.yml: |
+    filebeat.inputs:
+      - type: filestream
+        backoff_factor: 1s
+        backoff.init: 1s
+        backoff.max: 10s
+        enabled: true
+        paths:
+          - /logs/${LOG_NAME}
+        tags: [aomaker, raw]
+
+    output.logstash:
+      enabled: true
+      hosts: ["middleware-logstash.tink:5044"]
