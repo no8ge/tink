@@ -1,0 +1,135 @@
+# ---
+# kind: Service
+# apiVersion: v1
+# metadata:
+#   name: locust
+#   labels:
+#     app: locust
+# spec:
+#   selector:
+#     app: locust
+#   ports:
+#     - protocol: TCP
+#       port: 9090
+#       targetPort: 9090
+#       nodePort: 30177
+#   type: NodePort
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeat-config-locust
+data:
+  filebeat.yml: |
+    filebeat.inputs:
+      - type: filestream
+        paths:
+          - /logs/${LOG_NAME}
+        tags: ["locust", "log"]
+
+      - type: httpjson
+        interval: 1s
+        request.method: GET
+        request.url: http://${POD_IP}:9090/stats/requests
+        tags: ["locust", "stats_requests"]
+
+      - type: httpjson
+        interval: 1s
+        request.method: GET
+        request.url: http://${POD_IP}:9090/tasks
+        tags: ["locust", "tasks"]
+
+      - type: httpjson
+        interval: 1s
+        request.method: GET
+        request.url: http://${POD_IP}:9090/exceptions
+        tags: ["locust", "exceptions"]
+
+    output.logstash:
+      enabled: true
+      hosts: ["middleware-logstash.tink:5044"]
+
+    # output.console:
+    #   pretty: true
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: locust
+  labels:
+    app: locust
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: locust
+  template:
+    metadata:
+      labels:
+        app: locust
+    spec:
+      containers:
+        - name: locust
+          image: mx2542/demo:latest
+          command:
+            - locust
+          args:
+            - "-f"
+            - "src/locustfile.py"
+            - "-u"
+            - "10"
+            - "-r"
+            - "10"
+            - "--run-time"
+            - "120s"
+            - "--host"
+            - "http://demo.tink:8002"
+            - "--html=chart/report.html"
+            - "--logfile=chart/log.log"
+            - "--autostart"
+            - "--web-host=0.0.0.0"
+            - "--web-port=9090"
+            - "--loglevel=DEBUG"
+          ports:
+            - containerPort: 9090
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /demo/chart
+              name: logs-volume
+          env:
+            - name: INCLUSTER
+              value: "true"
+
+        - name: filebeat
+          image: docker.elastic.co/beats/filebeat:8.3.3
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-e"
+            - "-E"
+            - "http.enabled=true"
+          volumeMounts:
+            - name: filebeat-config-locust
+              readOnly: true
+              mountPath: /usr/share/filebeat/filebeat.yml
+              subPath: filebeat.yml
+            - mountPath: /logs
+              name: logs-volume
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: LOG_NAME
+              value: "log.log"
+
+      volumes:
+        - name: filebeat-config-locust
+          configMap:
+            name: filebeat-config-locust
+            items:
+              - key: filebeat.yml
+                path: filebeat.yml
+        - name: logs-volume
+          emptyDir: {}

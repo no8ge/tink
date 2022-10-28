@@ -26,6 +26,9 @@ class Pod():
                 f"echo health > {worker_logs_path}/health; $(CMD); rm -rf {worker_logs_path}/health"
             ],
             image_pull_policy='IfNotPresent',
+            ports=[
+                client.V1ContainerPort(container_port=9090)
+            ],
             volume_mounts=[
                 client.V1VolumeMount(
                     name='logs-volume',
@@ -71,6 +74,14 @@ class Pod():
                 client.V1EnvVar(
                     name='LOG_NAME',
                     value=pod.log_name
+                ),
+                client.V1EnvVar(
+                    name='POD_IP',
+                    value_from=client.V1EnvVarSource(
+                        field_ref=client.V1ObjectFieldSelector(
+                            field_path='status.podIP'
+                        )
+                    )
                 )
             ]
         )
