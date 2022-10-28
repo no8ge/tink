@@ -4,8 +4,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 
-from src.utils.pod import Pod
-from src.utils.job import Job
+from src.utils.locust import Locust
+from src.utils.aomaker import Aomaker
 from src.model import Task
 
 app = FastAPI()
@@ -18,8 +18,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-p = Pod()
-j = Job()
+p = Locust()
+j = Aomaker()
 
 
 @app.post("/tink/pod")

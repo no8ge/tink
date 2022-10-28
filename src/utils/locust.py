@@ -2,7 +2,7 @@ from src.env import NAMESPACE, INCLUSTER
 from kubernetes import client, config
 
 
-class Pod():
+class Locust():
 
     if INCLUSTER == 'true':
         config.load_incluster_config()

@@ -2,7 +2,7 @@ from src.env import NAMESPACE, INCLUSTER
 from kubernetes import client, config
 
 
-class Job():
+class Aomaker():
 
     if INCLUSTER == 'true':
         config.load_incluster_config()
