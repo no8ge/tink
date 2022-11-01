@@ -1,5 +1,6 @@
-from src.env import NAMESPACE, INCLUSTER
 from kubernetes import client, config
+
+from src.env import NAMESPACE, INCLUSTER
 
 
 class BaseJob():
