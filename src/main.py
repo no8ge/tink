@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.utils.locust import Locust
 from src.utils.aomaker import Aomaker
+from src.utils.base_job import BaseJob
+from src.utils.pod import Pod
 from src.model import Task
 
 app = FastAPI()
@@ -18,8 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-p = Locust()
-j = Aomaker()
+p = Pod()
 
 
 @app.post("/tink/pod")
@@ -55,7 +56,10 @@ async def delete_pod(name):
 @app.post("/tink/job")
 async def create_job(task: Task):
     try:
-        result = j.create_job(task).to_dict()
+        if task.type == 'aomaker':
+            result = Aomaker().create_job(task).to_dict()
+        elif task.type == 'locust':
+            result = Locust().create_job(task).to_dict()
         return result
     except Exception as e:
         logger.error(e.body)
@@ -65,7 +69,7 @@ async def create_job(task: Task):
 @app.get("/tink/job/{name}")
 async def get_job(name):
     try:
-        result = j.get_job(name).to_dict()
+        result = BaseJob().get_job(name).to_dict()
         return result
     except Exception as e:
         logger.error(e.body)
@@ -75,7 +79,7 @@ async def get_job(name):
 @app.delete("/tink/job/{name}")
 async def delete_job(name):
     try:
-        result = j.delete_job(name).to_dict()
+        result = BaseJob().delete_job(name).to_dict()
         return result
     except Exception as e:
         logger.error(e.body)

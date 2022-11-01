@@ -20,6 +20,32 @@ class TestJob():
         'report_id': '2'
     }
 
+    payload = {
+        "type": "locust",
+        "name": "3",
+        'container': {
+            'image': 'mx2542/demo:latest',
+            'command': 'locust \
+                -f src/locustfile.py \
+                -u 10 \
+                -r 3 \
+                --run-time 30s \
+                --host http://demo.tink:8002 \
+                --logfile=chart/log.log \
+                --loglevel=DEBUG \
+                --html=chart/report.html \
+                --web-host=0.0.0.0 \
+                --web-port=9090 \
+                --autostart \
+                --autoquit=3',
+            'volume_mounts': {
+                'log_mount_path': '/demo/chart',
+                'report_mount_path': '/demo/chart'
+            }
+        },
+        'log_name': 'log.log',
+    }
+
     name = payload['name']
 
     header = {
@@ -81,7 +107,8 @@ class TestPod():
                 --html=chart/report.html \
                 --web-host=0.0.0.0 \
                 --web-port=9090 \
-                --autostart',
+                --autostart \
+                --autoquit=3',
             'volume_mounts': {
                 'log_mount_path': '/demo/chart',
                 'report_mount_path': '/demo/chart'

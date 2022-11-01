@@ -1,25 +1,17 @@
-from src.env import NAMESPACE, INCLUSTER
-from kubernetes import client, config
+from kubernetes import client
+
+from src.utils.base_job import BaseJob
 
 
-class Locust():
+class Locust(BaseJob):
 
-    if INCLUSTER == 'true':
-        config.load_incluster_config()
-    else:
-        config.load_kube_config()
-    namespace = NAMESPACE
-    batch_v1 = client.BatchV1Api()
-    core_v1 = client.CoreV1Api()
-    apps_v1 = client.AppsV1Api()
+    def create_job(self, job):
 
-    def create_pod(self, pod):
-
-        worker_logs_path = pod.container.volume_mounts.log_mount_path
+        worker_logs_path = job.container.volume_mounts.log_mount_path
 
         worker = client.V1Container(
-            name=pod.type,
-            image=pod.container.image,
+            name=job.type,
+            image=job.container.image,
             command=['bash'],
             args=[
                 "-c",
@@ -38,7 +30,7 @@ class Locust():
             env=[
                 client.V1EnvVar(
                     name='CMD',
-                    value=pod.container.command
+                    value=job.container.command
                 )
             ]
         )
@@ -73,7 +65,7 @@ class Locust():
             env=[
                 client.V1EnvVar(
                     name='LOG_NAME',
-                    value=pod.log_name
+                    value=job.log_name
                 ),
                 client.V1EnvVar(
                     name='POD_IP',
@@ -86,81 +78,49 @@ class Locust():
             ]
         )
 
-        spec = client.V1PodSpec(
-            containers=[worker, filebeat],
-            restart_policy='OnFailure',
-            image_pull_secrets=[
-                client.V1LocalObjectReference(
-                    name='regcred'
+        spec = client.V1JobSpec(
+            ttl_seconds_after_finished=10,
+            backoff_limit=4,
+            template=client.V1PodTemplateSpec(
+                spec=client.V1PodSpec(
+                    hostname=job.name,
+                    containers=[worker, filebeat],
+                    restart_policy='Never',
+                    image_pull_secrets=[
+                        client.V1LocalObjectReference(
+                            name='regcred'
+                        )
+                    ],
+                    volumes=[
+                        client.V1Volume(
+                            name='logs-volume',
+                            empty_dir=client.V1EmptyDirVolumeSource()
+                        ),
+                        client.V1Volume(
+                            name='filebeat-config',
+                            config_map=client.V1ConfigMapVolumeSource(
+                                name=f'filebeat-config-{job.type}',
+                                items=[
+                                    client.V1KeyToPath(
+                                        key='filebeat.yml', path='filebeat.yml')
+                                ]
+                            )
+                        )
+                    ]
                 )
-            ],
-            volumes=[
-                client.V1Volume(
-                    name='logs-volume',
-                    empty_dir=client.V1EmptyDirVolumeSource()
-                ),
-                client.V1Volume(
-                    name='filebeat-config',
-                    config_map=client.V1ConfigMapVolumeSource(
-                        name=f'filebeat-config-{pod.type}',
-                        items=[
-                            client.V1KeyToPath(
-                                key='filebeat.yml', path='filebeat.yml')
-                        ]
-                    )
-                ),
-            ]
+            ),
         )
 
         metadata = client.V1ObjectMeta(
-            name=pod.name,
+            name=job.name,
         )
 
-        pod_object = client.V1Pod(
-            api_version="v1",
-            kind="Pod",
+        job_object = client.V1Job(
+            api_version="batch/v1",
+            kind="Job",
             metadata=metadata,
             spec=spec)
 
-        resp = self.core_v1.create_namespaced_pod(
-            body=pod_object, namespace=self.namespace)
-        return resp
-
-    def get_pod(self, name):
-        resp = self.core_v1.read_namespaced_pod(
-            name=name,
-            namespace=self.namespace
-        )
-        return resp
-
-    def delete_pod(self, name):
-        resp = self.core_v1.delete_namespaced_pod(
-            name=name,
-            namespace=self.namespace
-        )
-        return resp
-
-    def creat_configmap_from_file(self, name, fp, key='filebeat.yml'):
-
-        metadata = client.V1ObjectMeta(name=name)
-        config_map = client.V1ConfigMap(
-            api_version='v1',
-            kind='ConfigMap',
-            data={
-                key: open(fp).read()
-            },
-            metadata=metadata
-        )
-        result = self.core_v1.create_namespaced_config_map(
-            namespace=self.namespace,
-            body=config_map,
-
-        )
-        return result
-
-    def delete_configmap(self, name):
-        resp = self.core_v1.delete_namespaced_config_map(
-            name=name,
-            namespace=self.namespace
-        )
+        resp = self.batch_v1.create_namespaced_job(
+            body=job_object, namespace=self.namespace)
         return resp
