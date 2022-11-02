@@ -23,6 +23,6 @@ python_version = "3.9"
 
 [scripts]
 build-qt = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:1.0 . --push"
-build-dev = "docker build -f Dockerfile -t mx2542/tink:dev . --push"
-depoly-dev = "helm upgrade tink -n tink --set imagePullPolicy=IfNotPresent --set image=mx2542/tink:dev"
+build-dev = "docker buildx build -f Dockerfile -t mx2542/tink:dev ."
+depoly-dev = "helm install tink -n tink --set imagePullPolicy=IfNotPresent --set image=mx2542/tink:dev"
 upgrade-dev = "helm upgrade tink -n tink --set imagePullPolicy=IfNotPresent --set image=mx2542/tink:dev"
