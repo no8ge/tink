@@ -22,7 +22,7 @@ elasticsearch = "*"
 python_version = "3.9"
 
 [scripts]
-serve = "uvicorn src.main:app --reload --host=127.0.0.1 --port=8003"
-proxy = "kubectl port-forward svc/svc-tink 8003:8003"
-build = "docker buildx build -f Dockerfile --platform linux/amd64 -t mx2542/tink:1.0 . --push"
-build4qt = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:1.0 . --push"
+build-qt = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:1.0 . --push"
+build-dev = "docker build -f Dockerfile -t mx2542/tink:dev . --push"
+depoly-dev = "helm upgrade tink -n tink --set imagePullPolicy=IfNotPresent --set image=mx2542/tink:dev"
+upgrade-dev = "helm upgrade tink -n tink --set imagePullPolicy=IfNotPresent --set image=mx2542/tink:dev"
