@@ -34,6 +34,8 @@ spec:
       labels:
         app: tink
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: tink
           image: {{ .Values.image }}

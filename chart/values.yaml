@@ -1,2 +1,2 @@
-image: "mx2542/tink:latest"
+image: "mx2542/tink:1.0"
 imagePullPolicy: Always
