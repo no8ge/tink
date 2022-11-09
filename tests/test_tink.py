@@ -31,7 +31,6 @@ class TestJob():
                 -r 3 \
                 --run-time 30s \
                 --host http://demo.tink:8002 \
-                --logfile=chart/log.log \
                 --loglevel=DEBUG \
                 --html=chart/report.html \
                 --web-host=0.0.0.0 \
@@ -102,7 +101,6 @@ class TestPod():
                 -r 3 \
                 --run-time 30s \
                 --host http://demo.tink:8002 \
-                --logfile=chart/log.log \
                 --loglevel=DEBUG \
                 --html=chart/report.html \
                 --web-host=0.0.0.0 \

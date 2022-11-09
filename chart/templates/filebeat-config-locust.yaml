@@ -6,27 +6,31 @@ metadata:
 data:
   filebeat.yml: |
     filebeat.inputs:
-      - type: filestream
+      - type: container
+        enabled: true
         paths:
-          - /logs/${LOG_NAME}
+          - /var/log/containers/${POD_NAME}_tink_locust-*.log
         tags: ["locust", "log"]
 
       - type: httpjson
+        enabled: true
         interval: 1s
         request.method: GET
-        request.url: http://${POD_IP}:9090/stats/requests
+        request.url: http://127.0.0.1:9090/stats/requests
         tags: ["locust", "stats_requests"]
 
       - type: httpjson
+        enabled: true
         interval: 1s
         request.method: GET
-        request.url: http://${POD_IP}:9090/tasks
+        request.url: http://127.0.0.1:9090/tasks
         tags: ["locust", "tasks"]
 
       - type: httpjson
+        enabled: true
         interval: 1s
         request.method: GET
-        request.url: http://${POD_IP}:9090/exceptions
+        request.url: http://127.0.0.1:9090/exceptions
         tags: ["locust", "exceptions"]
 
     output.logstash:

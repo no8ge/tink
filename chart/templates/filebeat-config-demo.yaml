@@ -6,6 +6,12 @@ metadata:
 data:
   filebeat.yml: |
     filebeat.inputs:
+      - type: container
+        enabled: false
+        paths:
+          - /var/log/containers/${POD_NAME}_tink_demo-*.log
+        tags: ["demo", "log"]
+
       - type: filestream
         backoff_factor: 1s
         backoff.init: 1s
@@ -24,3 +30,6 @@ data:
     output.logstash:
       enabled: true
       hosts: ["middleware-logstash.tink:5044"]
+
+    # output.console:
+    #   pretty: true

@@ -6,14 +6,11 @@ metadata:
 data:
   filebeat.yml: |
     filebeat.inputs:
-      - type: filestream
-        backoff_factor: 1s
-        backoff.init: 1s
-        backoff.max: 10s
+      - type: container
         enabled: true
         paths:
-          - /logs/${LOG_NAME}
-        tags: [aomaker, raw]
+          - /var/log/containers/${POD_NAME}_tink_aomaker-*.log
+        tags: ["aomaker", "log"]
 
     output.logstash:
       enabled: true

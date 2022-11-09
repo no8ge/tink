@@ -7,31 +7,17 @@ class Locust(BaseJob):
 
     def create_job(self, job):
 
-        worker_logs_path = job.container.volume_mounts.log_mount_path
-
         worker = client.V1Container(
             name=job.type,
             image=job.container.image,
             command=['bash'],
             args=[
                 "-c",
-                f"echo health > {worker_logs_path}/health; $(CMD); rm -rf {worker_logs_path}/health"
+                job.container.command
             ],
             image_pull_policy='IfNotPresent',
             ports=[
-                client.V1ContainerPort(container_port=9090)
-            ],
-            volume_mounts=[
-                client.V1VolumeMount(
-                    name='logs-volume',
-                    mount_path=worker_logs_path
-                )
-            ],
-            env=[
-                client.V1EnvVar(
-                    name='CMD',
-                    value=job.container.command
-                )
+                client.V1ContainerPort(container_port=9090, name='locust')
             ]
         )
 
@@ -39,6 +25,10 @@ class Locust(BaseJob):
             name="filebeat",
             image="docker.elastic.co/beats/filebeat:8.3.3",
             image_pull_policy='IfNotPresent',
+            security_context=client.V1SecurityContext(
+                privileged=False,
+                run_as_user=0
+            ),
             args=[
                 '-e',
                 '-E',
@@ -46,32 +36,44 @@ class Locust(BaseJob):
             ],
             liveness_probe=client.V1Probe(
                 _exec=client.V1ExecAction(
-                    command=['cat', '/logs/health']),
+                    command=[
+                        'sh',
+                        '-c',
+                        'curl --fail 127.0.0.1:9090'
+                    ]
+                ),
                 initial_delay_seconds=5,
-                period_seconds=3
+                period_seconds=3,
+                timeout_seconds=5,
+                success_threshold=1,
+                failure_threshold=3
             ),
             volume_mounts=[
-                client.V1VolumeMount(
-                    name='logs-volume',
-                    mount_path='/logs'
-                ),
                 client.V1VolumeMount(
                     name='filebeat-config',
                     read_only=True,
                     mount_path='/usr/share/filebeat/filebeat.yml',
                     sub_path='filebeat.yml'
                 ),
+                client.V1VolumeMount(
+                    name='varlibdockercontainers',
+                    mount_path='/var/lib/docker/containers'
+                ),
+                client.V1VolumeMount(
+                    name='varlog',
+                    mount_path='/var/log'
+                ),
+                client.V1VolumeMount(
+                    name='varrundockersock',
+                    mount_path='/var/run/docker.sock'
+                ),
             ],
             env=[
                 client.V1EnvVar(
-                    name='LOG_NAME',
-                    value=job.log_name
-                ),
-                client.V1EnvVar(
-                    name='POD_IP',
+                    name='POD_NAME',
                     value_from=client.V1EnvVarSource(
                         field_ref=client.V1ObjectFieldSelector(
-                            field_path='status.podIP'
+                            field_path='metadata.name'
                         )
                     )
                 )
@@ -93,17 +95,31 @@ class Locust(BaseJob):
                     ],
                     volumes=[
                         client.V1Volume(
-                            name='logs-volume',
-                            empty_dir=client.V1EmptyDirVolumeSource()
-                        ),
-                        client.V1Volume(
                             name='filebeat-config',
                             config_map=client.V1ConfigMapVolumeSource(
-                                name=f'filebeat-config-{job.type}',
+                                name='filebeat-config-locust',
                                 items=[
                                     client.V1KeyToPath(
                                         key='filebeat.yml', path='filebeat.yml')
                                 ]
+                            )
+                        ),
+                        client.V1Volume(
+                            name='varrundockersock',
+                            host_path=client.V1HostPathVolumeSource(
+                                path='/var/run/docker.sock'
+                            )
+                        ),
+                        client.V1Volume(
+                            name='varlog',
+                            host_path=client.V1HostPathVolumeSource(
+                                path='/var/log'
+                            )
+                        ),
+                        client.V1Volume(
+                            name='varlibdockercontainers',
+                            host_path=client.V1HostPathVolumeSource(
+                                path='/var/lib/docker/containers'
                             )
                         )
                     ]

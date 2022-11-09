@@ -53,6 +53,10 @@ class Aomaker(BaseJob):
             name="filebeat",
             image="docker.elastic.co/beats/filebeat:8.3.3",
             image_pull_policy='IfNotPresent',
+            security_context=client.V1SecurityContext(
+                privileged=False,
+                run_as_user=0
+            ),
             args=[
                 '-e',
                 '-E',
@@ -75,17 +79,33 @@ class Aomaker(BaseJob):
                     mount_path='/usr/share/filebeat/filebeat.yml',
                     sub_path='filebeat.yml'
                 ),
+                client.V1VolumeMount(
+                    name='varlibdockercontainers',
+                    mount_path='/var/lib/docker/containers'
+                ),
+                client.V1VolumeMount(
+                    name='varlog',
+                    mount_path='/var/log'
+                ),
+                client.V1VolumeMount(
+                    name='varrundockersock',
+                    mount_path='/var/run/docker.sock'
+                ),
             ],
             env=[
                 client.V1EnvVar(
-                    name='LOG_NAME',
-                    value=job.log_name
+                    name='POD_NAME',
+                    value_from=client.V1EnvVarSource(
+                        field_ref=client.V1ObjectFieldSelector(
+                            field_path='metadata.name'
+                        )
+                    )
                 )
             ]
         )
 
         spec = client.V1JobSpec(
-            ttl_seconds_after_finished=10,
+            # ttl_seconds_after_finished=10,
             backoff_limit=4,
             template=client.V1PodTemplateSpec(
                 spec=client.V1PodSpec(
@@ -105,11 +125,29 @@ class Aomaker(BaseJob):
                         client.V1Volume(
                             name='filebeat-config',
                             config_map=client.V1ConfigMapVolumeSource(
-                                name=f'filebeat-config-{job.type}',
+                                name='filebeat-config-aomaker',
                                 items=[
                                     client.V1KeyToPath(
                                         key='filebeat.yml', path='filebeat.yml')
                                 ]
+                            )
+                        ),
+                        client.V1Volume(
+                            name='varrundockersock',
+                            host_path=client.V1HostPathVolumeSource(
+                                path='/var/run/docker.sock'
+                            )
+                        ),
+                        client.V1Volume(
+                            name='varlog',
+                            host_path=client.V1HostPathVolumeSource(
+                                path='/var/log'
+                            )
+                        ),
+                        client.V1Volume(
+                            name='varlibdockercontainers',
+                            host_path=client.V1HostPathVolumeSource(
+                                path='/var/lib/docker/containers'
                             )
                         ),
                         client.V1Volume(
