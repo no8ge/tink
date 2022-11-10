@@ -23,6 +23,23 @@ data:
               pattern: '^{'
               match: after
 
+    processors:
+      - script:
+          lang: javascript
+          source: >
+            function process(event) {
+                var tags = event.Get("tags");
+                if (tags.indexOf("aomaker") > -1 && tags.indexOf("summary") > -1){
+                  var msg = event.Get("message") + "}";
+                  event.Delete("message");
+                  event.Put("message",msg);
+                }
+            }
+
     output.logstash:
       enabled: true
       hosts: ["middleware-logstash.tink:5044"]
+
+    output.console:
+      enabled: false
+      pretty: true
