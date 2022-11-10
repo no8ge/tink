@@ -10,8 +10,8 @@ spec:
   capacity:
     storage: 8Gi
   #Replace hostPath for storage cloud solution
-  storageClassName: standard
-  # storageClassName: local
+  # storageClassName: standard
+  storageClassName: local-path 
   hostPath:
     path: /allure/projects
 
@@ -80,14 +80,43 @@ spec:
         type: app
     spec:
       containers:
+        - name: files
+          image: "mx2542/files:latest"
+          command:
+            - "uvicorn"
+          args:
+            - "src.main:app"
+            - "--reload"
+            - "--host=0.0.0.0"
+            - "--port=5353"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5353
+          securityContext:
+            runAsUser: 0
+            privileged: false
+          env:
+            - name: MIDDLEWARE_MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: middleware-minio
+                  key: root-user
+            - name: MIDDLEWARE_MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: middleware-minio
+                  key: root-password
+          volumeMounts:
+            - name: reports-volume
+              mountPath: /files/tmp
         - name: allure
           image: "frankescobar/allure-docker-service"
           imagePullPolicy: Always
           ports:
             - containerPort: 5050
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
+            runAsUser: 0
+            privileged: false
           envFrom:
             - configMapRef:
                 name: allure-config-map
@@ -102,8 +131,8 @@ spec:
           ports:
             - containerPort: 5252
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
+            runAsUser: 0
+            privileged: false
           envFrom:
             - configMapRef:
                 name: allure-config-ui-map
@@ -132,71 +161,9 @@ spec:
       port: 3030
       targetPort: 5252
       nodePort: 30009
+    - name: files
+      port: 4040
+      targetPort: 5353
+      nodePort: 30007
   selector:
     type: app
-
-# ---
-# apiVersion: apisix.apache.org/v2beta3
-# kind: ApisixUpstream
-# metadata:
-#   name: allure-service-node-port
-# spec:
-#   scheme: http
-#   loadbalancer:
-#     type: roundrobin
-
-# ---
-# apiVersion: apisix.apache.org/v2beta3
-# kind: ApisixRoute
-# metadata:
-#   name: route-allure-service-api-without-authorization
-# spec:
-#   http:
-#     - name: rule-allure-service-api
-#       match:
-#         hosts:
-#           - tink.test
-#         paths:
-#           - /allure-api/*
-#         methods:
-#           - GET
-#           - POST
-#           - PUT
-#           - DELETE
-#           - PATCH
-#           - HEAD
-#           - OPTIONS
-#           - CONNECT
-#           - TRACE
-#       plugins:
-#         - name: forward-auth
-#           enable: false
-#           config:
-#             uri: http://auth.tink:8001/auth/authorization/
-#             disable: false
-#             request_method: GET
-#             upstream_headers:
-#               - X-User-ID
-#             request_headers:
-#               - Authorization
-#       backends:
-#         - serviceName: allure-service-node-port
-#           servicePort: 2020
-
-
-# ---
-# apiVersion: apisix.apache.org/v2beta3
-# kind: ApisixRoute
-# metadata:
-#   name: route-allure-service-ui
-# spec:
-#   http:
-#     - name: rule-allure-service-ui
-#       match:
-#         hosts:
-#           - tink.test
-#         paths:
-#           - /allure-ui/*
-#       backends:
-#         - serviceName: allure-service-node-port
-#           servicePort: 3030

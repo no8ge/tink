@@ -12,6 +12,17 @@ data:
           - /var/log/containers/${POD_NAME}_tink_aomaker-*.log
         tags: ["aomaker", "log"]
 
+      - type: filestream
+        paths:
+          - /logs/html/widgets/summary.json
+        tags: ["aomaker", "summary"]
+        parsers:
+          - multiline:
+              type: pattern
+              negate: true
+              pattern: '^{'
+              match: after
+
     output.logstash:
       enabled: true
       hosts: ["middleware-logstash.tink:5044"]

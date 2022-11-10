@@ -7,7 +7,6 @@ class Aomaker(BaseJob):
 
     def create_job(self, job):
 
-        worker_logs_path = job.container.volume_mounts.log_mount_path
         worker_reports_path = job.container.volume_mounts.report_mount_path
 
         worker = client.V1Container(
@@ -16,17 +15,17 @@ class Aomaker(BaseJob):
             command=['bash'],
             args=[
                 "-c",
-                f"""echo health > {worker_logs_path}/health; \
+                f"""echo health > {worker_reports_path}/health; \
                 $(CMD); \
                 mkdir -p /projects/$(PID)/reports/$(RID); \
                 mv {worker_reports_path}/html/* /projects/$(PID)/reports/$(RID); \
-                rm {worker_logs_path}/health"""
+                rm {worker_reports_path}/health"""
             ],
             image_pull_policy='IfNotPresent',
             volume_mounts=[
                 client.V1VolumeMount(
                     name='logs-volume',
-                    mount_path=worker_logs_path
+                    mount_path=worker_reports_path
                 ),
                 client.V1VolumeMount(
                     name='allure-volume',

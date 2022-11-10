@@ -5,22 +5,6 @@ import pytest
 class TestJob():
 
     payload = {
-        "type": "aomaker",
-        "name": "1",
-        'container': {
-            'image': 'dockerhub.qingcloud.com/listen/hpc:1.0',
-            'command': 'arun -e qingcloud --mt --dist-mark fs sw',
-            'volume_mounts': {
-                'log_mount_path': '/data/autotest/logs',
-                'report_mount_path': '/data/autotest/reports'
-            }
-        },
-        'log_name': 'log.log',
-        'project_id': 'hpc',
-        'report_id': '2'
-    }
-
-    payload = {
         "type": "locust",
         "name": "3",
         'container': {
@@ -43,6 +27,21 @@ class TestJob():
             }
         },
         'log_name': 'log.log',
+    }
+    payload = {
+        "type": "aomaker",
+        "name": "1",
+        'container': {
+            'image': 'dockerhub.qingcloud.com/listen/hpc:1.0',
+            'command': 'arun -e qingcloud --mt --dist-mark fs sw && sleep 120',
+            'volume_mounts': {
+                'log_mount_path': '/data/autotest/logs',
+                'report_mount_path': '/data/autotest/reports'
+            }
+        },
+        'log_name': 'log.log',
+        'project_id': 'hpc',
+        'report_id': '2'
     }
 
     name = payload['name']
