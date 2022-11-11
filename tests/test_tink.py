@@ -7,8 +7,17 @@ class TestJob():
 
     id = str(uuid.uuid4())[0:6]
     payload = {
+        "type": "aomaker",
+        "name": id,
+        'container': {
+            'image': 'dockerhub.qingcloud.com/listen/hpc:2.0',
+            'command': 'arun -e qingcloud --mt --dist-mark fs sw',
+        },
+        'prefix': '/data/autotest/reports'
+    }
+    payload = {
         "type": "locust",
-        "name": "2",
+        "name": id,
         'container': {
             'image': 'mx2542/demo:latest',
             'command': 'locust \
@@ -18,32 +27,13 @@ class TestJob():
                 --run-time 30s \
                 --host http://demo.tink:8002 \
                 --loglevel=DEBUG \
-                --html=chart/report.html \
+                --html=report.html \
                 --web-host=0.0.0.0 \
                 --web-port=9090 \
                 --autostart \
-                --autoquit=3',
-            'volume_mounts': {
-                'log_mount_path': '/demo/chart',
-                'report_mount_path': '/demo/chart'
-            }
+                --autoquit=3'
         },
-        'log_name': 'log.log',
-    }
-    payload = {
-        "type": "aomaker",
-        "name": "1",
-        'container': {
-            'image': 'dockerhub.qingcloud.com/listen/hpc:1.0',
-            'command': 'arun -e qingcloud --mt --dist-mark fs sw && sleep 30',
-            'volume_mounts': {
-                'log_mount_path': '/data/autotest/logs',
-                'report_mount_path': '/data/autotest/reports'
-            }
-        },
-        'log_name': 'log.log',
-        'project_id': 'hpc',
-        'report_id': id
+        'prefix': '/demo/report.html',
     }
 
     name = payload['name']
@@ -70,63 +60,6 @@ class TestJob():
     def test_delete_job(self):
         resp = self.bs.delete(
             f'/tink/job/{self.name}',
-            headers=self.header
-        )
-        assert resp.status_code == 200
-
-
-@pytest.mark.usefixtures('init')
-class TestPod():
-
-    payload = {
-        "type": "locust",
-        "name": "3",
-        'container': {
-            'image': 'mx2542/demo:latest',
-            'command': 'locust \
-                -f src/locustfile.py \
-                -u 10 \
-                -r 3 \
-                --run-time 30s \
-                --host http://demo.tink:8002 \
-                --loglevel=DEBUG \
-                --html=chart/report.html \
-                --web-host=0.0.0.0 \
-                --web-port=9090 \
-                --autostart \
-                --autoquit=3',
-            'volume_mounts': {
-                'log_mount_path': '/demo/chart',
-                'report_mount_path': '/demo/chart'
-            }
-        },
-        'log_name': 'log.log',
-    }
-
-    name = payload['name']
-
-    header = {
-        "Authorization": "admin"
-    }
-
-    def test_create_pod(self):
-        resp = self.bs.post(
-            '/tink/pod',
-            json=self.payload,
-            headers=self.header
-        )
-        assert resp.status_code == 200
-
-    def test_get_pod(self):
-        resp = self.bs.get(
-            f'/tink/pod/{self.name}',
-            headers=self.header
-        )
-        assert resp.status_code == 200
-
-    def test_delete_pod(self):
-        resp = self.bs.delete(
-            f'/tink/pod/{self.name}',
             headers=self.header
         )
         assert resp.status_code == 200
