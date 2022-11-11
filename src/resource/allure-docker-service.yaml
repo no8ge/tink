@@ -80,35 +80,6 @@ spec:
         type: app
     spec:
       containers:
-        - name: files
-          image: "mx2542/files:latest"
-          command:
-            - "uvicorn"
-          args:
-            - "src.main:app"
-            - "--reload"
-            - "--host=0.0.0.0"
-            - "--port=5353"
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 5353
-          securityContext:
-            runAsUser: 0
-            privileged: false
-          env:
-            - name: MIDDLEWARE_MINIO_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: middleware-minio
-                  key: root-user
-            - name: MIDDLEWARE_MINIO_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: middleware-minio
-                  key: root-password
-          volumeMounts:
-            - name: reports-volume
-              mountPath: /files/tmp
         - name: allure
           image: "frankescobar/allure-docker-service"
           imagePullPolicy: Always
@@ -161,9 +132,5 @@ spec:
       port: 3030
       targetPort: 5252
       nodePort: 30009
-    - name: files
-      port: 4040
-      targetPort: 5353
-      nodePort: 30007
   selector:
     type: app
