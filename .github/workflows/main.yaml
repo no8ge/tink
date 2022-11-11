@@ -29,10 +29,3 @@ jobs:
         with:
           push: true
           tags: mx2542/tink:latest
-
-      - name: Build and push boxter
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          file: "boxter.Dockerfile"
-          tags: mx2542/boxter:latest
