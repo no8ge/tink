@@ -47,6 +47,14 @@ class Pod():
                 client.V1EnvVar(
                     name='PREFIX',
                     value=pod.prefix
+                ),
+                client.V1EnvVar(
+                    name='POD_NAME',
+                    value_from=client.V1EnvVarSource(
+                        field_ref=client.V1ObjectFieldSelector(
+                            field_path='metadata.name'
+                        )
+                    )
                 )
             ]
         )

@@ -9,6 +9,7 @@ from pprint import pprint
 from minio.error import InvalidResponseError
 
 prefix = os.getenv('PREFIX')
+pod_name = os.getenv('POD_NAME')
 
 minioClient = Minio(
     '127.0.0.1:9000',
@@ -58,7 +59,7 @@ def push(prefix):
         else:
             object_list = [prefix]
         for key in object_list:
-            minioClient.fput_object('atop', key, key)
+            minioClient.fput_object('atop', pod_name+key, key)
             pprint(f'push: {key}')
         pprint(f'push done')
     except Exception as err:

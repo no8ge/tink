@@ -8,7 +8,7 @@ class TestJob():
     id = str(uuid.uuid4())[0:6]
     payload = {
         "type": "aomaker",
-        "name": "1",
+        "name": "199999",
         'container': {
             'image': 'dockerhub.qingcloud.com/listen/hpc:2.0',
             'command': 'arun -e qingcloud --mt --dist-mark fs sw',
