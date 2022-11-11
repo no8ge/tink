@@ -1,3 +1,4 @@
+from pprint import pprint
 import traceback
 from loguru import logger
 from fastapi import FastAPI, HTTPException
@@ -25,6 +26,7 @@ p = Pod()
 
 @app.post("/tink/pod")
 async def create_pod(task: Task):
+    logger.info(task)
     try:
         result = p.create_pod(task).to_dict()
         return result
@@ -55,6 +57,7 @@ async def delete_pod(name):
 
 @app.post("/tink/job")
 async def create_job(task: Task):
+    logger.info(task)
     try:
         if task.type == 'aomaker':
             result = Aomaker().create_job(task).to_dict()
