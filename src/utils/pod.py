@@ -198,7 +198,7 @@ class Pod():
         )
         return resp
 
-    def creat_configmap_from_file(self, name, fp, key='filebeat.yml'):
+    def creat_configmap_from_file(self, name, fp, key):
 
         metadata = client.V1ObjectMeta(name=name)
         config_map = client.V1ConfigMap(
