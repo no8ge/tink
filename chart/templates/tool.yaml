@@ -31,6 +31,7 @@ metadata:
 data:
     script: |
         import os
+        import requests
 
         from minio import Minio
         from pprint import pprint
@@ -97,3 +98,6 @@ data:
                 pass
             else:
                 push(prefix)
+                r = requests.get(f'http://files.tink:8004/files/generate_report/{pod_name}')
+                pprint(r.status_code)
+                pprint(r.json())
