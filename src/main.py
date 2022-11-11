@@ -1,4 +1,3 @@
-from pprint import pprint
 import traceback
 from loguru import logger
 from fastapi import FastAPI, HTTPException

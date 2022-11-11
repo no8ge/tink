@@ -1,12 +1,14 @@
+import uuid
 import pytest
 
 
 @pytest.mark.usefixtures('init')
 class TestJob():
 
+    id = str(uuid.uuid4())[0:6]
     payload = {
         "type": "locust",
-        "name": "3",
+        "name": "2",
         'container': {
             'image': 'mx2542/demo:latest',
             'command': 'locust \
@@ -33,7 +35,7 @@ class TestJob():
         "name": "1",
         'container': {
             'image': 'dockerhub.qingcloud.com/listen/hpc:1.0',
-            'command': 'arun -e qingcloud --mt --dist-mark fs sw && sleep 120',
+            'command': 'arun -e qingcloud --mt --dist-mark fs sw && sleep 30',
             'volume_mounts': {
                 'log_mount_path': '/data/autotest/logs',
                 'report_mount_path': '/data/autotest/reports'
@@ -41,7 +43,7 @@ class TestJob():
         },
         'log_name': 'log.log',
         'project_id': 'hpc',
-        'report_id': '2'
+        'report_id': id
     }
 
     name = payload['name']
@@ -75,19 +77,6 @@ class TestJob():
 
 @pytest.mark.usefixtures('init')
 class TestPod():
-
-    payload = {
-        "type": "demo",
-        "name": "1",
-        'container': {
-            "image": 'mx2542/tink:latest',
-            'command': 'python demo/test_demo.py',
-            'volume_mounts': {
-                'log_mount_path': '/tink/logs',
-            }
-        },
-        'log_name': 'demo.log',
-    }
 
     payload = {
         "type": "locust",

@@ -5,6 +5,10 @@ metadata:
   name: filebeat-config-aomaker
 data:
   filebeat.yml: |
+    setup.ilm.enabled: false
+    setup.template.name: "atop"
+    setup.template.pattern: "atop-*"
+
     filebeat.inputs:
       - type: container
         enabled: true
@@ -36,8 +40,18 @@ data:
                 }
             }
 
-    output.logstash:
+      - drop_fields:
+          fields: ["stream", "agent", "ecs", "log", "input"]
+          ignore_missing: false
+
+    output.elasticsearch:
       enabled: true
+      allow_older_versions: true
+      index: "atop"
+      hosts: ["middleware-elasticsearch-master-headless:9200"]
+
+    output.logstash:
+      enabled: false
       hosts: ["middleware-logstash.tink:5044"]
 
     output.console:

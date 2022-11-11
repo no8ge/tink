@@ -104,7 +104,7 @@ class Aomaker(BaseJob):
         )
 
         spec = client.V1JobSpec(
-            # ttl_seconds_after_finished=10,
+            ttl_seconds_after_finished=10,
             backoff_limit=4,
             template=client.V1PodTemplateSpec(
                 spec=client.V1PodSpec(
