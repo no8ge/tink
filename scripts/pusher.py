@@ -67,4 +67,6 @@ def push(prefix):
 
 
 if __name__ == "__main__":
+    if prefix is None:
+        pass
     push(prefix)
