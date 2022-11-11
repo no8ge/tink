@@ -23,27 +23,37 @@ class Aomaker(BaseJob):
             ],
             image_pull_policy='IfNotPresent',
             volume_mounts=[
+                # client.V1VolumeMount(
+                #     name='logs-volume',
+                #     mount_path=worker_reports_path
+                # ),
+                # client.V1VolumeMount(
+                #     name='allure-volume',
+                #     mount_path='/projects'
+                # )
                 client.V1VolumeMount(
-                    name='logs-volume',
-                    mount_path=worker_reports_path
-                ),
-                client.V1VolumeMount(
-                    name='allure-volume',
-                    mount_path='/projects'
+                    name='atop-init-script',
+                    read_only=True,
+                    mount_path='/data/autotest/init-script.py',
+                    sub_path='init-script.py'
                 )
             ],
             env=[
+                # client.V1EnvVar(
+                #     name='CMD',
+                #     value=job.container.command
+                # ),
+                # client.V1EnvVar(
+                #     name='RID',
+                #     value=job.report_id
+                # ),
+                # client.V1EnvVar(
+                #     name='PID',
+                #     value=job.project_id
+                # )
                 client.V1EnvVar(
-                    name='CMD',
-                    value=job.container.command
-                ),
-                client.V1EnvVar(
-                    name='RID',
-                    value=job.report_id
-                ),
-                client.V1EnvVar(
-                    name='PID',
-                    value=job.project_id
+                    name='PREFIX',
+                    value=worker_reports_path
                 )
             ]
         )
@@ -63,15 +73,15 @@ class Aomaker(BaseJob):
             ],
             liveness_probe=client.V1Probe(
                 _exec=client.V1ExecAction(
-                    command=['cat', '/logs/health']),
+                    command=['cat', '/var/log/containers/${POD_NAME}_tink_aomaker-*.log']),
                 initial_delay_seconds=5,
                 period_seconds=3
             ),
             volume_mounts=[
-                client.V1VolumeMount(
-                    name='logs-volume',
-                    mount_path='/logs'
-                ),
+                # client.V1VolumeMount(
+                #     name='logs-volume',
+                #     mount_path='/logs'
+                # ),
                 client.V1VolumeMount(
                     name='filebeat-config',
                     read_only=True,
@@ -104,7 +114,7 @@ class Aomaker(BaseJob):
         )
 
         spec = client.V1JobSpec(
-            # ttl_seconds_after_finished=10,
+            ttl_seconds_after_finished=10,
             backoff_limit=4,
             template=client.V1PodTemplateSpec(
                 spec=client.V1PodSpec(
@@ -117,10 +127,10 @@ class Aomaker(BaseJob):
                         )
                     ],
                     volumes=[
-                        client.V1Volume(
-                            name='logs-volume',
-                            empty_dir=client.V1EmptyDirVolumeSource()
-                        ),
+                        # client.V1Volume(
+                        #     name='logs-volume',
+                        #     empty_dir=client.V1EmptyDirVolumeSource()
+                        # ),
                         client.V1Volume(
                             name='filebeat-config',
                             config_map=client.V1ConfigMapVolumeSource(
@@ -128,6 +138,16 @@ class Aomaker(BaseJob):
                                 items=[
                                     client.V1KeyToPath(
                                         key='filebeat.yml', path='filebeat.yml')
+                                ]
+                            )
+                        ),
+                        client.V1Volume(
+                            name='atop-init-script',
+                            config_map=client.V1ConfigMapVolumeSource(
+                                name='atop-init-script',
+                                items=[
+                                    client.V1KeyToPath(
+                                        key='init-script', path='init-script.py')
                                 ]
                             )
                         ),
@@ -149,12 +169,12 @@ class Aomaker(BaseJob):
                                 path='/var/lib/docker/containers'
                             )
                         ),
-                        client.V1Volume(
-                            name='allure-volume',
-                            persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
-                                claim_name='allure-persistent-volume-claim'
-                            ),
-                        )
+                        # client.V1Volume(
+                        #     name='allure-volume',
+                        #     persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
+                        #         claim_name='allure-persistent-volume-claim'
+                        #     ),
+                        # )
                     ]
                 )
             ),

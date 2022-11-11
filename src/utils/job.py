@@ -1,9 +1,18 @@
-from kubernetes import client
+from kubernetes import client, config
 
-from src.utils.base_job import BaseJob
+from src.env import INCLUSTER, NAMESPACE
 
 
-class Locust(BaseJob):
+class Job():
+
+    if INCLUSTER == 'true':
+        config.load_incluster_config()
+    else:
+        config.load_kube_config()
+    namespace = NAMESPACE
+    batch_v1 = client.BatchV1Api()
+    core_v1 = client.CoreV1Api()
+    apps_v1 = client.AppsV1Api()
 
     def create_job(self, job):
 
@@ -17,8 +26,7 @@ class Locust(BaseJob):
             ],
             image_pull_policy='IfNotPresent',
             ports=[
-                client.V1ContainerPort(container_port=9090, name='locust'),
-                client.V1ContainerPort(container_port=8000, name='ack')
+                client.V1ContainerPort(container_port=9090, name='locust')
             ],
             volume_mounts=[
                 client.V1VolumeMount(
@@ -37,7 +45,7 @@ class Locust(BaseJob):
             env=[
                 client.V1EnvVar(
                     name='PREFIX',
-                    value='/demo/report.html'
+                    value=job.prefix
                 )
             ]
         )
@@ -66,6 +74,7 @@ class Locust(BaseJob):
                 initial_delay_seconds=10,
                 period_seconds=3,
                 timeout_seconds=5,
+                success_threshold=1,
                 failure_threshold=3
             ),
             volume_mounts=[
@@ -117,7 +126,7 @@ class Locust(BaseJob):
                         client.V1Volume(
                             name='filebeat-config',
                             config_map=client.V1ConfigMapVolumeSource(
-                                name='filebeat-config-locust',
+                                name=f'filebeat-config-{job.type}',
                                 items=[
                                     client.V1KeyToPath(
                                         key='filebeat.yml', path='filebeat.yml')
@@ -179,4 +188,44 @@ class Locust(BaseJob):
 
         resp = self.batch_v1.create_namespaced_job(
             body=job_object, namespace=self.namespace)
+        return resp
+
+    def get_job(self, name):
+        resp = self.batch_v1.read_namespaced_job(
+            name=name,
+            namespace=self.namespace
+        )
+        return resp
+
+    def delete_job(self, name):
+        resp = self.batch_v1.delete_namespaced_job(
+            name=name,
+            propagation_policy='Background',
+            namespace=self.namespace
+        )
+        return resp
+
+    def creat_configmap_from_file(self, name, fp, key='filebeat.yml'):
+
+        metadata = client.V1ObjectMeta(name=name)
+        config_map = client.V1ConfigMap(
+            api_version='v1',
+            kind='ConfigMap',
+            data={
+                key: open(fp).read()
+            },
+            metadata=metadata
+        )
+        result = self.core_v1.create_namespaced_config_map(
+            namespace=self.namespace,
+            body=config_map,
+
+        )
+        return result
+
+    def delete_configmap(self, name):
+        resp = self.core_v1.delete_namespaced_config_map(
+            name=name,
+            namespace=self.namespace
+        )
         return resp
