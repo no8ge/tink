@@ -10,21 +10,21 @@ class TestJob():
         "type": "aomaker",
         "name": "1",
         'container': {
-            'image': 'dockerhub.qingcloud.com/listen/hpc:1.0',
-            'command': 'arun -e qingcloud --mt --dist-mark fs sw && sleep 30',
+            'image': 'dockerhub.qingcloud.com/listen/hpc:2.0',
+            'command': 'arun -e qingcloud --mt --dist-mark fs sw',
         },
         'prefix': '/data/autotest/reports'
     }
     payload1 = {
         "type": "locust",
-        "name": "13",
+        "name": "1",
         'container': {
             'image': 'mx2542/demo:latest',
             'command': 'locust \
                 -f src/locustfile.py \
                 -u 10 \
                 -r 3 \
-                --run-time 60s \
+                --run-time 30s \
                 --host http://demo.tink:8002 \
                 --loglevel=DEBUG \
                 --html=report.html \

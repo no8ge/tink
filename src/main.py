@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 
-from src.utils.job import Job
+from src.utils.pod import Pod
 from src.model import Task
 
 app = FastAPI()
@@ -22,7 +22,7 @@ app.add_middleware(
 async def create_job(task: Task):
     logger.info(task)
     try:
-        result = Job().create_job(task).to_dict()
+        result = Pod().create_job(task).to_dict()
         return result
     except Exception as e:
         logger.error(e.body)
@@ -32,7 +32,7 @@ async def create_job(task: Task):
 @app.get("/tink/job/{name}")
 async def get_job(name):
     try:
-        result = Job().get_job(name).to_dict()
+        result = Pod().get_job(name).to_dict()
         return result
     except Exception as e:
         logger.error(e.body)
@@ -42,7 +42,7 @@ async def get_job(name):
 @app.delete("/tink/job/{name}")
 async def delete_job(name):
     try:
-        result = Job().delete_job(name).to_dict()
+        result = Pod().delete_job(name).to_dict()
         return result
     except Exception as e:
         logger.error(e.body)

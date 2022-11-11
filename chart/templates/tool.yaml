@@ -40,12 +40,18 @@ data:
 
         minioClient = Minio(
             'middleware-minio.tink:9000',
-            # '127.0.0.1:9000',
             access_key='admin',
             secret_key='changeme',
             secure=False
         )
 
+        def get_all_abs_path(source_dir):
+            path_list = []
+            for fpathe, dirs, fs in os.walk(source_dir):
+                for f in fs:
+                    p = os.path.join(fpathe, f)
+                    path_list.append(p)
+            return path_list
 
         def pull(bucket_name: str, prefix: str):
             try:
@@ -74,14 +80,13 @@ data:
         def push(prefix):
             try:
                 if os.path.isdir(prefix):
-                    object_list = []
-                    for _ in os.listdir(prefix):
-                        object_list.append(os.path.join(prefix, _))
+                    object_list = get_all_abs_path(prefix)
                 else:
                     object_list = [prefix]
                 for key in object_list:
                     minioClient.fput_object('atop', key, key)
-                    pprint(f'push object: {key}')
+                    pprint(f'push: {key}')
+                pprint('push done')
             except Exception as err:
                 pprint(err)
 

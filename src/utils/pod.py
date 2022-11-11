@@ -1,5 +1,6 @@
-from src.env import NAMESPACE, INCLUSTER
 from kubernetes import client, config
+
+from src.env import NAMESPACE, INCLUSTER
 
 
 class Pod():
@@ -13,9 +14,7 @@ class Pod():
     core_v1 = client.CoreV1Api()
     apps_v1 = client.AppsV1Api()
 
-    def create_pod(self, pod):
-
-        worker_logs_path = pod.container.volume_mounts.log_mount_path
+    def create_job(self, pod):
 
         worker = client.V1Container(
             name=pod.type,
@@ -23,22 +22,31 @@ class Pod():
             command=['bash'],
             args=[
                 "-c",
-                f"echo health > {worker_logs_path}/health; $(CMD); rm -rf {worker_logs_path}/health"
+                f"python /atop/ack.py; {pod.container.command}; python /atop/script.py"
             ],
             image_pull_policy='IfNotPresent',
             ports=[
-                client.V1ContainerPort(container_port=9090)
+                client.V1ContainerPort(container_port=9090, name='locust'),
+                client.V1ContainerPort(container_port=8000, name='ack')
             ],
             volume_mounts=[
                 client.V1VolumeMount(
-                    name='logs-volume',
-                    mount_path=worker_logs_path
+                    name='pusher',
+                    read_only=True,
+                    mount_path='/atop/script.py',
+                    sub_path='script.py'
+                ),
+                client.V1VolumeMount(
+                    name='ack',
+                    read_only=True,
+                    mount_path='/atop/ack.py',
+                    sub_path='ack.py'
                 )
             ],
             env=[
                 client.V1EnvVar(
-                    name='CMD',
-                    value=pod.container.command
+                    name='PREFIX',
+                    value=pod.prefix
                 )
             ]
         )
@@ -47,6 +55,10 @@ class Pod():
             name="filebeat",
             image="docker.elastic.co/beats/filebeat:8.3.3",
             image_pull_policy='IfNotPresent',
+            security_context=client.V1SecurityContext(
+                privileged=False,
+                run_as_user=0
+            ),
             args=[
                 '-e',
                 '-E',
@@ -54,32 +66,44 @@ class Pod():
             ],
             liveness_probe=client.V1Probe(
                 _exec=client.V1ExecAction(
-                    command=['cat', '/logs/health']),
+                    command=[
+                        'sh',
+                        '-c',
+                        'curl --fail 127.0.0.1:8000'
+                    ]
+                ),
                 initial_delay_seconds=5,
-                period_seconds=3
+                period_seconds=3,
+                timeout_seconds=5,
+                success_threshold=1,
+                failure_threshold=3
             ),
             volume_mounts=[
-                client.V1VolumeMount(
-                    name='logs-volume',
-                    mount_path='/logs'
-                ),
                 client.V1VolumeMount(
                     name='filebeat-config',
                     read_only=True,
                     mount_path='/usr/share/filebeat/filebeat.yml',
                     sub_path='filebeat.yml'
                 ),
+                client.V1VolumeMount(
+                    name='varlibdockercontainers',
+                    mount_path='/var/lib/docker/containers'
+                ),
+                client.V1VolumeMount(
+                    name='varlog',
+                    mount_path='/var/log'
+                ),
+                client.V1VolumeMount(
+                    name='varrundockersock',
+                    mount_path='/var/run/docker.sock'
+                ),
             ],
             env=[
                 client.V1EnvVar(
-                    name='LOG_NAME',
-                    value=pod.log_name
-                ),
-                client.V1EnvVar(
-                    name='POD_IP',
+                    name='POD_NAME',
                     value_from=client.V1EnvVarSource(
                         field_ref=client.V1ObjectFieldSelector(
-                            field_path='status.podIP'
+                            field_path='metadata.name'
                         )
                     )
                 )
@@ -96,10 +120,6 @@ class Pod():
             ],
             volumes=[
                 client.V1Volume(
-                    name='logs-volume',
-                    empty_dir=client.V1EmptyDirVolumeSource()
-                ),
-                client.V1Volume(
                     name='filebeat-config',
                     config_map=client.V1ConfigMapVolumeSource(
                         name=f'filebeat-config-{pod.type}',
@@ -109,6 +129,44 @@ class Pod():
                         ]
                     )
                 ),
+                client.V1Volume(
+                    name='pusher',
+                    config_map=client.V1ConfigMapVolumeSource(
+                        name='pusher',
+                        items=[
+                            client.V1KeyToPath(
+                                key='script', path='script.py')
+                        ]
+                    )
+                ),
+                client.V1Volume(
+                    name='ack',
+                    config_map=client.V1ConfigMapVolumeSource(
+                        name='ack',
+                        items=[
+                            client.V1KeyToPath(
+                                key='ack', path='ack.py')
+                        ]
+                    )
+                ),
+                client.V1Volume(
+                    name='varrundockersock',
+                    host_path=client.V1HostPathVolumeSource(
+                        path='/var/run/docker.sock'
+                    )
+                ),
+                client.V1Volume(
+                    name='varlog',
+                    host_path=client.V1HostPathVolumeSource(
+                        path='/var/log'
+                    )
+                ),
+                client.V1Volume(
+                    name='varlibdockercontainers',
+                    host_path=client.V1HostPathVolumeSource(
+                        path='/var/lib/docker/containers'
+                    )
+                )
             ]
         )
 
@@ -126,14 +184,14 @@ class Pod():
             body=pod_object, namespace=self.namespace)
         return resp
 
-    def get_pod(self, name):
+    def get_job(self, name):
         resp = self.core_v1.read_namespaced_pod(
             name=name,
             namespace=self.namespace
         )
         return resp
 
-    def delete_pod(self, name):
+    def delete_job(self, name):
         resp = self.core_v1.delete_namespaced_pod(
             name=name,
             namespace=self.namespace
