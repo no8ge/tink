@@ -120,7 +120,8 @@ class Pod():
 
         spec = client.V1PodSpec(
             containers=[worker, filebeat],
-            restart_policy='OnFailure',
+            restart_policy='Never',
+            # restart_policy='OnFailure',
             image_pull_secrets=[
                 client.V1LocalObjectReference(
                     name='regcred'

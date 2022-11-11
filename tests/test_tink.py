@@ -15,7 +15,7 @@ class TestJob():
         },
         'prefix': '/data/autotest/reports'
     }
-    payload1 = {
+    payload = {
         "type": "locust",
         "name": "1",
         'container': {
