@@ -2,42 +2,38 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: tink
+  name:  "{{ .Release.Name }}-{{ .Chart.Name }}"
   labels:
-    app: tink
+    app:  "{{ .Release.Name }}-{{ .Chart.Name }}"
 spec:
   selector:
-    app: tink
+    app:  "{{ .Release.Name }}-{{ .Chart.Name }}"
   ports:
     - protocol: TCP
       port: 8003
-      targetPort:
-        8003
-        # nodePort: 30085
-  clusterIP: None
-  # type: NodePort
+      targetPort: 8003
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tink
+  name:  "{{ .Release.Name }}-{{ .Chart.Name }}"
   labels:
-    app: tink
+    app:  "{{ .Release.Name }}-{{ .Chart.Name }}"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tink
+      app:  "{{ .Release.Name }}-{{ .Chart.Name }}"
   template:
     metadata:
       labels:
-        app: tink
+        app:  "{{ .Release.Name }}-{{ .Chart.Name }}"
     spec:
       imagePullSecrets:
         - name: regcred
       containers:
-        - name: tink
+        - name:  "{{ .Release.Name }}-{{ .Chart.Name }}"
           image: {{ .Values.image }}
           command:
             - "uvicorn"

@@ -11,6 +11,8 @@ from minio.error import InvalidResponseError
 
 prefix = os.getenv('PREFIX')
 pod_name = os.getenv('POD_NAME')
+files_service_hosts = os.getenv('FILES_SERVICE_HOSTS')
+
 
 minioClient = Minio(
     '127.0.0.1:9000',
@@ -68,9 +70,10 @@ def push(prefix):
 
 
 if __name__ == "__main__":
-    if prefix ==  '':
+    if prefix == '':
         pass
     else:
-        push(prefix)    
-        r = requests.get(f'http://files.tink:8004/files/generate_report/{pod_name}')
+        push(prefix)
+        r = requests.get(
+            f'http://{files_service_hosts}/files/generate_report/{pod_name}')
         pprint(r.json())

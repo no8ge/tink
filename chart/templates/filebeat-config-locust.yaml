@@ -13,7 +13,7 @@ data:
       - type: container
         enabled: true
         paths:
-          - /var/log/containers/${POD_NAME}_tink_locust-*.log
+          - /var/log/containers/${POD_NAME}_*_locust-*.log
         tags: ["locust", "log"]
 
       - type: httpjson
@@ -47,7 +47,8 @@ data:
       enabled: true
       allow_older_versions: true
       index: "atop"
-      hosts: ["middleware-elasticsearch-master-headless:9200"]
+      hosts:
+        - ${ELASTICSEARCH_SERVICE_HOSTS}
 
     output.logstash:
       enabled: false

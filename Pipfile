@@ -22,8 +22,5 @@ elasticsearch = "*"
 python_version = "3.9"
 
 [scripts]
-build-qt = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:1.0 . --push"
-build-qt-dev = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:dev . --push"
-build-dev = "docker buildx build -f Dockerfile -t mx2542/tink:dev ."
-depoly-dev = "helm install tink chart -n tink --set imagePullPolicy=IfNotPresent --set image=mx2542/tink:dev"
-upgrade-dev = "helm upgrade tink chart  -n tink --set imagePullPolicy=IfNotPresent --set image=mx2542/tink:dev"
+build = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:1.0 . --push"
+chart = "sh scripts/push-chart.sh"

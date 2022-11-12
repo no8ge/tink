@@ -15,7 +15,7 @@ class TestJob():
         },
         'prefix': '/data/autotest/reports'
     }
-    payload1 = {
+    payload = {
         "type": "locust",
         "name": id,
         'container': {
@@ -25,7 +25,7 @@ class TestJob():
                 -u 10 \
                 -r 3 \
                 --run-time 30s \
-                --host http://demo.tink:8002 \
+                --host http://demo-demo.atop:8002 \
                 --loglevel=DEBUG \
                 --html=report.html \
                 --web-host=0.0.0.0 \

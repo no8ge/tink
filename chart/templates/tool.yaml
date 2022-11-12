@@ -39,9 +39,12 @@ data:
 
         prefix = os.getenv('PREFIX')
         pod_name = os.getenv('POD_NAME')
+        files_service_hosts = os.getenv('FILES_SERVICE_HOSTS')
+        minio_host =  os.getenv('MINIO_HOST')
+
 
         minioClient = Minio(
-            'middleware-minio.tink:9000',
+            minio_host,
             access_key='admin',
             secret_key='changeme',
             secure=False
@@ -97,5 +100,5 @@ data:
                 pass
             else:
                 push(prefix)
-                r = requests.get(f'http://files.tink:8004/files/generate_report/{pod_name}')
+                r = requests.get(f'http://{files_service_hosts}/files/generate_report/{pod_name}')
                 pprint(r.json())
