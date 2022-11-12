@@ -3,6 +3,7 @@ Night's Watch for worker
 """
 
 import os
+import requests
 
 from minio import Minio
 from pprint import pprint
@@ -70,4 +71,6 @@ if __name__ == "__main__":
     if prefix ==  '':
         pass
     else:
-        push(prefix)
+        push(prefix)    
+        r = requests.get(f'http://files.tink:8004/files/generate_report/{pod_name}')
+        pprint(r.json())

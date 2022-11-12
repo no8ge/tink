@@ -15,11 +15,11 @@ class TestJob():
         },
         'prefix': '/data/autotest/reports'
     }
-    payload = {
+    payload1 = {
         "type": "locust",
         "name": id,
         'container': {
-            'image': 'mx2542/demo:latest',
+            'image': 'dockerhub.qingcloud.com/qingtest/demo:1.0',
             'command': 'locust \
                 -f src/locustfile.py \
                 -u 10 \
