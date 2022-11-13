@@ -25,7 +25,7 @@ class TestJob():
                 -u 10 \
                 -r 3 \
                 --run-time 30s \
-                --host http://demo-demo.atop:8002 \
+                --host http://dev-demo.atop:8002 \
                 --loglevel=DEBUG \
                 --html=report.html \
                 --web-host=0.0.0.0 \
@@ -35,7 +35,15 @@ class TestJob():
         },
         'prefix': '/demo/report.html',
     }
-
+    payload = {
+        "type": "jmeter",
+        "name": id,
+        'container': {
+            'image': 'mx2542/demo:latest',
+            'command': 'apache-jmeter-5.4.3/bin/jmeter -n -t src/demo.jmx -l report/test.jtl -e -o report',
+        },
+        'prefix': '/demo/report'
+    }
     name = payload['name']
 
     header = {
