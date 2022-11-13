@@ -1,2 +1,5 @@
-image: "mx2542/tink:latest"
+registry: docker.io
+repository: mx2542
+image: "tink:latest"
 imagePullPolicy: Always
+private: false
