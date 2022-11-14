@@ -64,6 +64,7 @@ async def get_job(name):
 async def delete_job(name):
     try:
         result = Pod().delete_job(name).to_dict()
+        es.delete(index,name)
         return result
     except Exception as e:
         logger.error(e.body)
