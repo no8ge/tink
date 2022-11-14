@@ -65,6 +65,17 @@ class TestJob():
         )
         assert resp.status_code == 200
 
+    def test_get_jobs(self):
+        resp = self.bs.get(
+            f'/tink/jobs',
+            headers=self.header,
+            params={
+                '_from': 0,
+                'size': 2
+            }
+        )
+        assert resp.status_code == 200
+
     def test_delete_job(self):
         resp = self.bs.delete(
             f'/tink/job/{self.name}',
