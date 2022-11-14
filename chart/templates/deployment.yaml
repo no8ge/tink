@@ -52,3 +52,8 @@ spec:
               value: {{ .Release.Namespace | quote }}
             - name: INCLUSTER
               value: "true"
+            - name: ELASTICSEARCH_SERVICE_HOSTS
+              valueFrom:
+                configMapKeyRef:
+                  name: atop-globe-config
+                  key: elasticsearch_service_hosts
