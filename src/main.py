@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.model import Task
 from src.utils.pod import Pod
 from src.helper import EsHelper
+from src.utils.konika import Konika
 from src.env import ELASTICSEARCH_SERVICE_HOSTS
 
 
@@ -36,7 +37,10 @@ async def startup_event():
 async def create_job(task: Task):
     logger.info(task)
     try:
-        result = Pod().create_job(task).to_dict()
+        if task.type == 'konika':
+            result = Konika().create(task).to_dict()
+        else:
+            result = Pod().create_job(task).to_dict()
         data = task.dict()
         data['timestamp'] = datetime.now()
         es.insert(

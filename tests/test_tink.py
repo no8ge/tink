@@ -44,6 +44,17 @@ class TestJob():
         },
         'prefix': '/demo/report'
     }
+
+    payload = {
+        "type": "konika",
+        "name": id,
+        'container': {
+            'image': 'mx2542/test:2.0',
+            'command': '',
+        },
+        'prefix': 'auth'
+    }
+
     name = payload['name']
 
     header = {
