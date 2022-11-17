@@ -63,4 +63,4 @@ if __name__ == "__main__":
     if prefix == '':
         pass
     else:
-        pull('cases', prefix)
+        pull('case', prefix)
