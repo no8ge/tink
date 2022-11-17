@@ -89,7 +89,7 @@ data:
             if prefix == '':
                 pass
             else:
-                push(prefix)
+                push('result',prefix)
                 r = requests.get(f'http://{files_service_hosts}/files/generate_report/result/{pod_name}')
                 pprint(r.json())
 
