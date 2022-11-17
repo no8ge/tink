@@ -67,19 +67,19 @@ data:
                         ]
                     )
                     minioClient.fget_object(
-                        'atop', obj.object_name, f'{obj.object_name}')
+                        bucket_name, obj.object_name, f'{obj.object_name}')
             except InvalidResponseError as err:
                 pprint(err)
 
 
-        def push(prefix):
+        def push(bucket_name,prefix):
             try:
                 if os.path.isdir(prefix):
                     object_list = get_all_abs_path(prefix)
                 else:
                     object_list = [prefix]
                 for key in object_list:
-                    minioClient.fput_object('atop', pod_name+key, key)
+                    minioClient.fput_object(bucket_name, pod_name+key, key)
                 pprint('push done')
             except Exception as err:
                 pprint(err)
@@ -90,7 +90,7 @@ data:
                 pass
             else:
                 push(prefix)
-                r = requests.get(f'http://{files_service_hosts}/files/generate_report/{pod_name}')
+                r = requests.get(f'http://{files_service_hosts}/files/generate_report/result/{pod_name}')
                 pprint(r.json())
 
 ---
@@ -143,14 +143,14 @@ data:
         except InvalidResponseError as err:
             pprint(err)
 
-    def push(prefix):
+    def push(bucket_name,prefix):
         try:
             if os.path.isdir(prefix):
                 object_list = get_all_abs_path(prefix)
             else:
                 object_list = [prefix]
             for key in object_list:
-                minioClient.fput_object('atop', key, key)
+                minioClient.fput_object(bucket_name, key, key)
                 pprint(f'push: {key}')
             pprint(f'push done')
         except Exception as err:
@@ -160,5 +160,5 @@ data:
         if prefix == '':
             pass
         else:
-            pull('image', prefix)
+            pull('cases', prefix)
             pprint('done')

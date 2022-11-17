@@ -6,8 +6,8 @@ metadata:
 data:
   filebeat.yml: |
     setup.ilm.enabled: false
-    setup.template.name: "atop"
-    setup.template.pattern: "atop-*"
+    setup.template.name: "logs"
+    setup.template.pattern: "logs-*"
 
     filebeat.inputs:
       - type: container
@@ -47,7 +47,7 @@ data:
     output.elasticsearch:
       enabled: true
       allow_older_versions: true
-      index: "atop"
+      index: "logs"
       hosts:
         - ${ELASTICSEARCH_SERVICE_HOSTS}
 

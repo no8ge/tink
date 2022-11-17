@@ -45,14 +45,14 @@ def pull(bucket_name: str, prefix: str):
         pprint(err)
 
 
-def push(prefix):
+def push(bucket_name,prefix):
     try:
         if os.path.isdir(prefix):
             object_list = get_all_abs_path(prefix)
         else:
             object_list = [prefix]
         for key in object_list:
-            minioClient.fput_object('atop', key, key)
+            minioClient.fput_object(bucket_name, key, key)
             pprint(f'push: {key}')
         pprint(f'push done')
     except Exception as err:
@@ -63,4 +63,4 @@ if __name__ == "__main__":
     if prefix == '':
         pass
     else:
-        pull('image', prefix)
+        pull('cases', prefix)
