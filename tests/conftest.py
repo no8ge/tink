@@ -7,9 +7,9 @@ from requests_toolbelt.sessions import BaseUrlSession
 env = os.getenv('ENV')
 envs = {
     'loc': 'http://127.0.0.1:8003',
-    'dev': 'http://atop.test:31695',
+    'dev': 'http://tink.dev:31694',
     'test': 'http://tink.test:31695',
-    'prd': 'http://tink.com:31695',
+    'production': 'http://tink.com:31696',
 }
 
 
