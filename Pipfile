@@ -11,10 +11,9 @@ autopep8 = "==1.6.0"
 uvicorn = {extras = ["standard"], version = "==0.17.6"}
 requests-toolbelt = "==0.9.1"
 pytz = "==2022.1"
-minio = "*"
-loguru = "*"
-redis = "*"
-elasticsearch = "*"
+minio = "==7.1.11"
+loguru = "==0.6.0"
+elasticsearch = "==8.4.0"
 
 [dev-packages]
 
@@ -22,5 +21,7 @@ elasticsearch = "*"
 python_version = "3.9"
 
 [scripts]
-build = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:1.0 . --push"
 chart = "sh scripts/push-chart.sh"
+dev = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:dev . --push"
+test = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:test . --push"
+prod = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:1.0 . --push"
