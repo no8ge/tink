@@ -17,7 +17,7 @@ class Konika():
 
         initer = client.V1Container(
             name='initer',
-            image='mx2542/demo:latest',
+            image='dockerhub.qingcloud.com/qingtest/demo:dev',
             command=['python'],
             args=[
                 "/demo/puller.py"
