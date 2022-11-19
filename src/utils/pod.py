@@ -24,7 +24,7 @@ class Pod():
                 "-c",
                 f"python /atop/ack.py; {pod.container.command}; python /atop/script.py"
             ],
-            image_pull_policy='Always',
+            image_pull_policy='IfNotPresent',
             ports=[
                 client.V1ContainerPort(container_port=9090, name='locust'),
                 client.V1ContainerPort(container_port=8000, name='ack')
