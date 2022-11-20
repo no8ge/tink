@@ -93,3 +93,10 @@ class TestJob():
             headers=self.header
         )
         assert resp.status_code == 200
+
+    def test_metrics(self):
+        resp = self.bs.get(
+            '/tink/metrics',
+            headers=self.header
+        )
+        assert resp.status_code == 200

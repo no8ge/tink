@@ -4,6 +4,7 @@ from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from prometheus_client import CollectorRegistry, Gauge, generate_latest
 
 from src.model import Task
 from src.utils.pod import Pod
@@ -43,6 +44,7 @@ async def create_job(task: Task):
             result = Pod().create_job(task).to_dict()
         data = task.dict()
         data['timestamp'] = datetime.now()
+        data['status'] = 'ready'
         es.insert(
             index,
             task.name,
@@ -68,7 +70,7 @@ async def get_job(name):
 async def delete_job(name):
     try:
         result = Pod().delete_job(name).to_dict()
-        es.delete(index,name)
+        es.delete(index, name)
         return result
     except Exception as e:
         logger.error(e.body)
@@ -85,3 +87,35 @@ async def get_job(_from: int, size: int):
     resp['total'] = total
     resp['_sources'] = _sources
     return resp
+
+
+@app.get('/tink/metrics')
+async def metrics():
+
+    result = es.search('tink', {}, 0, 10000, mod='match_all')
+    hits = result['hits']['hits']
+    _sources = list(map(lambda x: x['_source'], hits))
+
+    for s in _sources:
+        resp = Pod().get_job(s['name']).to_dict()
+        for _ in resp['status']['container_statuses']:
+            if _['name'] != s['name'] and s['status'] != 'Completed':
+                if _['state']['running'] != None:
+                    s['status'] = 'running'
+                if _['state']['waiting'] != None:
+                    s['status'] = 'waiting'
+                if _['state']['terminated'] != None:
+                    s['status'] = _['state']['terminated']['reason']
+        es.update(index, s['name'], s)
+
+    registry = CollectorRegistry()
+    gauge = Gauge(
+        'tink_task_status',
+        'pod status by tink created',
+        ['name'],
+        registry=registry
+    )
+
+    gauge.labels(s['name']).set(1)
+
+    return generate_latest(registry)
