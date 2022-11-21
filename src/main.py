@@ -40,7 +40,6 @@ async def create_job(task: TK):
         result = Task(task).create().to_dict()
         data = task.dict()
         data['timestamp'] = datetime.now()
-        data['status'] = 'ready'
         es.insert(
             index,
             task.name,
