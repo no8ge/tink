@@ -93,7 +93,7 @@ async def metrics():
         'Failed': 3,
         'Unknown': 4,
     }
-    result = es.search('tink', {}, 0, 10000, mod='match_all')
+    result = es.search(index, {}, 0, 10000, mod='match_all')
     _sources = list(map(lambda x: x['_source'], result['hits']['hits']))
     for s in _sources:
         resp = Task().get(s['name']).to_dict()
