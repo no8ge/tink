@@ -1,4 +1,5 @@
 from elasticsearch import Elasticsearch
+from prometheus_client import CollectorRegistry, Gauge, generate_latest
 
 
 class EsHelper():
@@ -51,3 +52,19 @@ class EsHelper():
                 }
             )
         return q
+
+
+class PrometheusHekper():
+
+    def __init__(self) -> None:
+        pass
+        self.registry = CollectorRegistry()
+        self.tink_task_status = Gauge(
+            'tink_task_status',
+            'pod status by tink created',
+            ['name', 'type', 'status'],
+            registry=self.registry
+        )
+
+    def generate_latest(self):
+        return generate_latest(self.registry)

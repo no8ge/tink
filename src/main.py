@@ -5,13 +5,11 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 
-from prometheus_client import CollectorRegistry, Gauge, generate_latest
-
 from src.model import Task
 from src.utils.pod import Pod
-from src.helper import EsHelper
 from src.utils.konika import Konika
 from src.env import ELASTICSEARCH_SERVICE_HOSTS
+from src.helper import EsHelper, PrometheusHekper
 
 
 index = 'tink'
@@ -109,14 +107,6 @@ async def metrics():
                     s['status'] = _['state']['terminated']['reason']
         es.update(index, s['name'], s)
 
-    registry = CollectorRegistry()
-    gauge = Gauge(
-        'tink_task_status',
-        'pod status by tink created',
-        ['name', 'type', 'status'],
-        registry=registry
-    )
-
-    gauge.labels(s['name'], s['type'], s['status']).set(1)
-
-    return generate_latest(registry)
+    PrometheusHekper().tink_task_status.labels(
+        s['name'], s['type'], s['status']).set(1)
+    return PrometheusHekper.generate_latest()
