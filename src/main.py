@@ -2,12 +2,11 @@ import traceback
 from loguru import logger
 from datetime import datetime
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
+from fastapi.middleware.cors import CORSMiddleware
 
-from src.model import Task
-from src.utils.pod import Pod
-from src.utils.konika import Konika
+from src.task import Task
+from src.model import Task as TK
 from src.env import ELASTICSEARCH_SERVICE_HOSTS
 from src.helper import EsHelper, PrometheusHekper
 
@@ -34,13 +33,10 @@ async def startup_event():
 
 
 @app.post("/tink/job")
-async def create_job(task: Task):
+async def create_job(task: TK):
     logger.info(task)
     try:
-        if task.type == 'konika':
-            result = Konika().create(task).to_dict()
-        else:
-            result = Pod().create_job(task).to_dict()
+        result = Task(task).create().to_dict()
         data = task.dict()
         data['timestamp'] = datetime.now()
         data['status'] = 'ready'
@@ -58,7 +54,7 @@ async def create_job(task: Task):
 @app.get("/tink/job/{name}")
 async def get_job(name):
     try:
-        result = Pod().get_job(name).to_dict()
+        result = Task().get(name).to_dict()
         return result
     except Exception as e:
         logger.error(e.body)
@@ -68,7 +64,7 @@ async def get_job(name):
 @app.delete("/tink/job/{name}")
 async def delete_job(name):
     try:
-        result = Pod().delete_job(name).to_dict()
+        result = Task().delete(name).to_dict()
         es.delete(index, name)
         return result
     except Exception as e:
@@ -95,7 +91,7 @@ async def metrics():
     _sources = list(map(lambda x: x['_source'], result['hits']['hits']))
 
     for s in _sources:
-        resp = Pod().get_job(s['name']).to_dict()
+        resp = Task().get(s['name']).to_dict()
         for _ in resp['status']['container_statuses']:
             if _['name'] != s['name'] and s['status'] != 'Completed':
                 if _['state']['running'] != None:

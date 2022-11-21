@@ -1,11 +1,10 @@
-import uuid
 import pytest
 
 
 @pytest.mark.usefixtures('init')
 class TestJob():
 
-    id = str(uuid.uuid4())[0:6]
+    id = 1
     payload = {
         "type": "aomaker",
         "name": id,
@@ -35,7 +34,7 @@ class TestJob():
         },
         'prefix': '/demo/report.html',
     }
-    payload = {
+    payload1 = {
         "type": "jmeter",
         "name": id,
         'container': {
@@ -45,7 +44,7 @@ class TestJob():
         'prefix': '/demo/report'
     }
 
-    payload = {
+    payload1 = {
         "type": "konika",
         "name": id,
         'container': {

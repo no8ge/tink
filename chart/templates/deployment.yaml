@@ -50,8 +50,6 @@ spec:
           env:
             - name: NAMESPACE
               value: {{ .Release.Namespace | quote }}
-            - name: INCLUSTER
-              value: "true"
             - name: ELASTICSEARCH_SERVICE_HOSTS
               valueFrom:
                 configMapKeyRef:
