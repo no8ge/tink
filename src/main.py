@@ -93,14 +93,7 @@ async def metrics():
 
     for s in _sources:
         resp = Task().get(s['name']).to_dict()
-        for _ in resp['status']['container_statuses']:
-            if _['name'] != s['name'] and s['status'] != 'Completed':
-                if _['state']['running'] != None:
-                    s['status'] = 'running'
-                if _['state']['waiting'] != None:
-                    s['status'] = 'waiting'
-                if _['state']['terminated'] != None:
-                    s['status'] = _['state']['terminated']['reason']
+        s['status'] = resp['status']['phase']
         es.update(index, s['name'], s)
         ph.tink_task_status.labels(
             s['name'], s['type'], s['status'], NAMESPACE).set(1)
