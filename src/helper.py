@@ -57,7 +57,7 @@ class EsHelper():
 class PrometheusHekper():
 
     def __init__(self) -> None:
-        pass
+
         self.registry = CollectorRegistry()
         self.tink_task_status = Gauge(
             'tink_task_status',

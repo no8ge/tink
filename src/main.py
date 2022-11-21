@@ -92,8 +92,7 @@ async def get_job(_from: int, size: int):
 async def metrics():
 
     result = es.search('tink', {}, 0, 10000, mod='match_all')
-    hits = result['hits']['hits']
-    _sources = list(map(lambda x: x['_source'], hits))
+    _sources = list(map(lambda x: x['_source'], result['hits']['hits']))
 
     for s in _sources:
         resp = Pod().get_job(s['name']).to_dict()
@@ -109,4 +108,4 @@ async def metrics():
 
     PrometheusHekper().tink_task_status.labels(
         s['name'], s['type'], s['status']).set(1)
-    return PrometheusHekper.generate_latest()
+    return PrometheusHekper().generate_latest()
