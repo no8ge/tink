@@ -14,6 +14,7 @@ from src.helper import EsHelper, PrometheusHekper
 index = 'tink'
 app = FastAPI()
 es = EsHelper(ELASTICSEARCH_SERVICE_HOSTS)
+ph = PrometheusHekper()
 
 app.add_middleware(
     CORSMiddleware,
@@ -101,7 +102,5 @@ async def metrics():
                 if _['state']['terminated'] != None:
                     s['status'] = _['state']['terminated']['reason']
         es.update(index, s['name'], s)
-
-    PrometheusHekper().tink_task_status.labels(
-        s['name'], s['type'], s['status']).set(1)
-    return PrometheusHekper().generate_latest()
+        ph.tink_task_status.labels(s['name'], s['type'], s['status']).set(1)
+    return ph.generate_latest()
