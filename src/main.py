@@ -3,6 +3,7 @@ from loguru import logger
 from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 
 from prometheus_client import CollectorRegistry, Gauge, generate_latest
 
@@ -89,7 +90,7 @@ async def get_job(_from: int, size: int):
     return resp
 
 
-@app.get('/tink/metrics')
+@app.get('/tink/metrics', response_class=PlainTextResponse)
 async def metrics():
 
     result = es.search('tink', {}, 0, 10000, mod='match_all')
@@ -112,10 +113,10 @@ async def metrics():
     gauge = Gauge(
         'tink_task_status',
         'pod status by tink created',
-        ['name'],
+        ['name', 'type', 'status'],
         registry=registry
     )
 
-    gauge.labels(s['name']).set(1)
+    gauge.labels(s['name'], s['type'], s['status']).set(1)
 
     return generate_latest(registry)
