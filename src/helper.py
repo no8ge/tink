@@ -62,7 +62,7 @@ class PrometheusHekper():
         self.tink_task_status = Gauge(
             'tink_task_status',
             'pod status by tink created',
-            ['name', 'type', 'status'],
+            ['name', 'type', 'status', 'namespace'],
             registry=self.registry
         )
 

@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.task import Task
 from src.model import Task as TK
-from src.env import ELASTICSEARCH_SERVICE_HOSTS
+from src.env import ELASTICSEARCH_SERVICE_HOSTS, NAMESPACE
 from src.helper import EsHelper, PrometheusHekper
 
 
@@ -102,5 +102,6 @@ async def metrics():
                 if _['state']['terminated'] != None:
                     s['status'] = _['state']['terminated']['reason']
         es.update(index, s['name'], s)
-        ph.tink_task_status.labels(s['name'], s['type'], s['status']).set(1)
+        ph.tink_task_status.labels(
+            s['name'], s['type'], s['status'], NAMESPACE).set(1)
     return ph.generate_latest()
