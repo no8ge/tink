@@ -86,14 +86,18 @@ async def get_job(_from: int, size: int):
 
 @app.get('/tink/metrics', response_class=PlainTextResponse)
 async def metrics():
-
+    status_map = {
+        'Running': 0,
+        'Succeeded': 1,
+        'Pending': 2,
+        'Failed': 3,
+        'Unknown': 4,
+    }
     result = es.search('tink', {}, 0, 10000, mod='match_all')
     _sources = list(map(lambda x: x['_source'], result['hits']['hits']))
-
     for s in _sources:
         resp = Task().get(s['name']).to_dict()
         s['status'] = resp['status']['phase']
         es.update(index, s['name'], s)
-        ph.tink_task_status.labels(
-            s['name'], s['type'], s['status'], NAMESPACE).set(1)
+        ph.tink_task_status.labels(s['name'], s['type'], NAMESPACE).set(status_map[s['status']])
     return ph.generate_latest()
