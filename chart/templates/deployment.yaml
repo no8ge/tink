@@ -5,6 +5,10 @@ metadata:
   name:  "{{ .Release.Name }}-{{ .Chart.Name }}"
   labels:
     app:  "{{ .Release.Name }}-{{ .Chart.Name }}"
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/tink/metrics'
+    prometheus.io/port: '8003'
 spec:
   selector:
     app:  "{{ .Release.Name }}-{{ .Chart.Name }}"
