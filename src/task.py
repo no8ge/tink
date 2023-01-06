@@ -120,15 +120,6 @@ class Task():
                     )
                 ),
                 client.V1EnvVar(
-                    name='FILES_SERVICE_HOSTS',
-                    value_from=client.V1EnvVarSource(
-                        config_map_key_ref=client.V1ConfigMapKeySelector(
-                            name='atop-globe-config',
-                            key='files_service_hosts'
-                        )
-                    )
-                ),
-                client.V1EnvVar(
                     name='MINIO_HOST',
                     value_from=client.V1EnvVarSource(
                         config_map_key_ref=client.V1ConfigMapKeySelector(

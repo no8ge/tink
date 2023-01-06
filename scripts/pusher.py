@@ -3,7 +3,6 @@ Night's Watch for worker
 """
 
 import os
-import requests
 
 from minio import Minio
 from pprint import pprint
@@ -11,7 +10,6 @@ from minio.error import InvalidResponseError
 
 prefix = os.getenv('PREFIX')
 pod_name = os.getenv('POD_NAME')
-files_service_hosts = os.getenv('FILES_SERVICE_HOSTS')
 
 
 minioClient = Minio(
@@ -73,7 +71,7 @@ if __name__ == "__main__":
     if prefix == '':
         pass
     else:
-        push('result', prefix)
-        r = requests.get(
-            f'http://{files_service_hosts}/files/generate_report/result/{pod_name}')
-        pprint(r.json())
+        if os.path.exists(prefix):
+            push('result', prefix)
+        else:
+            pprint('report not exists')
