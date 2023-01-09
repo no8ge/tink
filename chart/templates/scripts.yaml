@@ -73,7 +73,7 @@ data:
             if prefix == '':
                 pass
             else:
-                if os.path.exists(prefix):
+                if os.path.exists(prefix + '/html'):
                     push('result', prefix)
                 else:
                     pprint('report not exists')
