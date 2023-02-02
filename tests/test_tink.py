@@ -35,7 +35,7 @@ class TestJob():
             "type": "aomaker",
             "name": self.id,
             'container': {
-                'image': 'dockerhub.qingcloud.com/listen/hpc:2.0',
+                'image': 'dockerhub.qingcloud.com/listen/hpc:4.0',
                 'command': 'arun -e qingcloud --mt --dist-mark fs sw',
             },
             'prefix': '/data/autotest/reports'
