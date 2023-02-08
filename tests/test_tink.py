@@ -1,10 +1,10 @@
+import uuid
 import pytest
-
 
 @pytest.mark.usefixtures('init')
 class TestJob():
 
-    id = 2
+    id = '1'
 
     header = {
         "Authorization": "admin"
@@ -34,6 +34,7 @@ class TestJob():
         payload = {
             "type": "aomaker",
             "name": self.id,
+            "uid": str(uuid.uuid4()),
             'container': {
                 'image': 'dockerhub.qingcloud.com/listen/hpc:4.0',
                 'command': 'arun -e qingcloud --mt --dist-mark fs sw',

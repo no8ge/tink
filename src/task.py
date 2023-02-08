@@ -144,7 +144,10 @@ class Task():
         obj = client.V1Pod(
             api_version="v1",
             kind="Pod",
-            metadata=client.V1ObjectMeta(name=self.task.name),
+            metadata=client.V1ObjectMeta(
+                name=self.task.name,
+                labels={'uid': self.task.uid},
+            ),
             spec=client.V1PodSpec(
                 init_containers=init_containers,
                 containers=containers,

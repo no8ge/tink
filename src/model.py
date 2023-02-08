@@ -10,5 +10,6 @@ class Container(BaseModel):
 class Task(BaseModel):
     type: str
     name: str
+    uid: Union[str, None] = None
     container: Container
     prefix: Union[str, None] = None
