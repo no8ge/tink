@@ -112,6 +112,10 @@ class Task():
                     value=self.task.prefix
                 ),
                 client.V1EnvVar(
+                    name='UID',
+                    value=self.task.uid
+                ),
+                client.V1EnvVar(
                     name='POD_NAME',
                     value_from=client.V1EnvVarSource(
                         field_ref=client.V1ObjectFieldSelector(
@@ -151,6 +155,8 @@ class Task():
             spec=client.V1PodSpec(
                 init_containers=init_containers,
                 containers=containers,
+                host_network=True,
+                dns_policy='ClusterFirstWithHostNet',
                 # restart_policy='Never',
                 restart_policy='OnFailure',
                 image_pull_secrets=[

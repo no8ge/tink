@@ -15,6 +15,7 @@ data:
         prefix = os.getenv('PREFIX')
         pod_name = os.getenv('POD_NAME')
         minio_host =  os.getenv('MINIO_HOST')
+        uid =  os.getenv('UID')
 
 
         minioClient = Minio(
@@ -63,7 +64,7 @@ data:
                 else:
                     object_list = [prefix]
                 for key in object_list:
-                    minioClient.fput_object(bucket_name, pod_name+key, key)
+                    minioClient.fput_object(bucket_name, pod_name+'-'+uid+key, key)
                 pprint('push done')
             except Exception as err:
                 pprint(err)

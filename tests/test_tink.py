@@ -4,7 +4,7 @@ import pytest
 @pytest.mark.usefixtures('init')
 class TestJob():
 
-    id = '1'
+    id = 'lunz'
 
     header = {
         "Authorization": "admin"
