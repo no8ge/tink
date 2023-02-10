@@ -61,7 +61,7 @@ def push(bucket_name, prefix):
         else:
             object_list = [prefix]
         for key in object_list:
-            minioClient.fput_object(bucket_name, pod_name+'-'+uid+key, key)
+            minioClient.fput_object(bucket_name, pod_name+uid+key, key)
             pprint(f'push: {key}')
         pprint(f'push done')
     except Exception as err:
