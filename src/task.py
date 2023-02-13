@@ -95,9 +95,9 @@ class Task():
                 f"{self.task.container.command}; python /atop/script.py"
             ],
             image_pull_policy='IfNotPresent',
-            ports=[
-                client.V1ContainerPort(container_port=9090, name='locust'),
-            ],
+            # ports=[
+            #     client.V1ContainerPort(container_port=9090, name='locust'),
+            # ],
             volume_mounts=[
                 client.V1VolumeMount(
                     name='pusher',

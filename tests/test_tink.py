@@ -37,7 +37,7 @@ class TestJob():
             "uid": str(uuid.uuid4()),
             'container': {
                 'image': 'dockerhub.qingcloud.com/listen/hpc:4.0',
-                'command': 'arun -e qingcloud --mt --dist-mark fs sw',
+                'command': 'arun -e testbm -m hpc_fs',
             },
             'prefix': '/data/autotest/reports'
         }
