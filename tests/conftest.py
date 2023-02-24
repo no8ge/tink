@@ -18,3 +18,9 @@ def init(request):
     url = envs[env]
     bs = BaseUrlSession(base_url=url)
     request.cls.bs = bs
+    if env == 'dev':
+        request.cls.ws_url = 'ws://atop.test:31694/analysis/ws/raw'
+    if env == 'test':
+        request.cls.ws_url = 'ws://tink.test:31695/analysis/ws/raw'
+    if env == 'production':
+        request.cls.ws_url = 'ws://tink.com:31696/analysis/ws/raw'
