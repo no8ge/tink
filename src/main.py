@@ -73,7 +73,7 @@ async def delete_job(name):
 
 
 @app.get("/tink/jobs")
-async def get_job(_from: int, size: int):
+async def get_jobs(_from: int, size: int):
     result = es.search(index, {}, _from, size, mod='match_all')
     resp = {}
     total = result['hits']['total']['value']

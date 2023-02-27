@@ -60,6 +60,7 @@ websocket-client = "==1.4.2"
 websockets = "==10.4"
 wrapt = "==1.14.1"
 prometheus-client = "*"
+aiohttp = "*"
 
 [dev-packages]
 

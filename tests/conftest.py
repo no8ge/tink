@@ -18,6 +18,7 @@ def init(request):
     url = envs[env]
     bs = BaseUrlSession(base_url=url)
     request.cls.bs = bs
+    request.cls.url = url
     if env == 'dev':
         request.cls.ws_url = 'ws://atop.test:31694/analysis/ws/raw'
     if env == 'test':
