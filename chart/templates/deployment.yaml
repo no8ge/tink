@@ -48,6 +48,8 @@ spec:
             - "--reload"
             - "--host=0.0.0.0"
             - "--port=8003"
+            - "--debug"
+            - "--log-config=uvicorn_config.json"
           ports:
             - containerPort: 8003
           imagePullPolicy: {{ .Values.imagePullPolicy }}
