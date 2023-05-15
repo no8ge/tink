@@ -7,6 +7,7 @@ metadata:
 data:
     script: |
         import os
+        import shutil
 
         from minio import Minio
         from pprint import pprint
@@ -76,6 +77,8 @@ data:
             else:
                 if os.path.exists(prefix + '/html'):
                     push('result', prefix)
+                    os.makerdirs(f'/report/{pod_name}' + prefix')
+                    os.system(f"mv {prefix}/html  /report/{pod_name}{prefix}")
                 else:
                     pprint('report not exists')
 

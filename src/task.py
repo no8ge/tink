@@ -104,6 +104,10 @@ class Task():
                     read_only=True,
                     mount_path='/atop/script.py',
                     sub_path='script.py'
+                ),
+                client.V1VolumeMount(
+                    name='share-volume',
+                    mount_path='/report',
                 )
             ],
             env=[
@@ -157,8 +161,8 @@ class Task():
                 containers=containers,
                 host_network=True,
                 dns_policy='ClusterFirstWithHostNet',
-                # restart_policy='Never',
-                restart_policy='OnFailure',
+                restart_policy='Never',
+                # restart_policy='OnFailure',
                 image_pull_secrets=[
                     client.V1LocalObjectReference(
                         name='regcred'
@@ -200,6 +204,12 @@ class Task():
                     client.V1Volume(
                         name='cache-volume',
                         empty_dir=client.V1EmptyDirVolumeSource()
+                    ),
+                    client.V1Volume(
+                        name='share-volume',
+                        host_path=client.V1HostPathVolumeSource(
+                            path='/atop/share'
+                        )
                     ),
                 ]
             )
