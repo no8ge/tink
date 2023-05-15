@@ -70,5 +70,5 @@ python_version = "3.10"
 [scripts]
 chart = "sh scripts/push-chart.sh"
 dev = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:dev-1.1 . --push"
-test = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:test-1.1 . --push"
+test = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:test-1.2 . --push"
 production = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:1.1 . --push"
