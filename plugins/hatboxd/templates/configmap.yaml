@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Chart.Name }}-{{ .Release.Name }}"
+data:
+  testbed.yaml: |
+    {{ .Values.configmap.testbed | indent 2 }}
+  testcases.yaml: | 
+    {{ .Values.configmap.testcases | indent 2 }}

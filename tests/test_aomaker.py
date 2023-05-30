@@ -8,7 +8,7 @@ from pprint import pprint
 class TestOk():
 
     id = 'lunz'
-    uid = '1'
+    uid = '091143e5-464e-4704-8438-04ecc98f4b1a'
 
     header = {
         "Authorization": "admin"
@@ -23,7 +23,7 @@ class TestOk():
                 'image': 'dockerhub.qingcloud.com/listen/hpc:4.0',
                 'command': 'arun -e testbm -m hpc_fs',
             },
-            'prefix': '/data/autotest/reports'
+            'prefix': '/data/autotest/reports/html'
         }
 
         resp = self.bs.post(
@@ -35,7 +35,7 @@ class TestOk():
 
     def test_get_job(self):
         resp = self.bs.get(
-            f'/tink/job/{self.id}',
+            f'/tink/job/{self.id}-{self.uid}',
             headers=self.header
         )
         status = resp.json()['status']['phase']
@@ -86,12 +86,22 @@ class TestOk():
 
     def test_get_report(self):
         resp = self.bs.get(
-            f'/files/report/result/aomaker/{self.id + self.uid}', headers=self.header)
+            f'/files/report/result/aomaker/{self.id}-{self.uid}', headers=self.header)
+        assert resp.status_code == 200
+
+    def test_get_object(self):
+        resp = self.bs.get(
+            '/files/',
+            params={
+                "prefix": "lunz-091143e5-464e-4704-8438-04ecc98f4b1a/data/autotest/reports/html/widgets/summary.json",
+                'bucket_name': 'result'
+            },
+            headers=self.header)
         assert resp.status_code == 200
 
     def test_delete_job(self):
         resp = self.bs.delete(
-            f'/tink/job/{self.id}',
+            f'/tink/job/{self.id}-{self.uid}',
             headers=self.header
         )
         assert resp.status_code == 200

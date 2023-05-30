@@ -1,89 +1,29 @@
+import traceback
+from loguru import logger
 from kubernetes import client, config
+from kubernetes.config.config_exception import ConfigException
 
 from src.env import NAMESPACE
 
 
 class Task():
+    try:
+        config.load_incluster_config()
+        api_instance = client.CoreV1Api()
+    except ConfigException as e:
+        if e.args[0] == 'Service host/port is not set.':
+            logger.warning(e)
+            config.load_kube_config()
+            api_instance = client.CoreV1Api()
+    except Exception as e:
+        logger.error(traceback.format_exc())
 
-    config.load_incluster_config()
-    # config.load_kube_config()
     namespace = NAMESPACE
     batch_v1 = client.BatchV1Api()
     core_v1 = client.CoreV1Api()
 
     def __init__(self, task=None) -> None:
         self.task = task
-
-    def puller(self):
-        return client.V1Container(
-            name='initer',
-            image='dockerhub.qingcloud.com/qingtest/demo:dev',
-            command=['python'],
-            args=[
-                "/demo/puller.py"
-            ],
-            image_pull_policy='IfNotPresent',
-
-            volume_mounts=[
-                client.V1VolumeMount(
-                    name='puller',
-                    read_only=True,
-                    mount_path='/demo/puller.py',
-                    sub_path='puller.py'
-                ),
-                client.V1VolumeMount(
-                    name='cache-volume',
-                    mount_path=f'/demo/{self.task.prefix}'
-
-                )
-            ],
-            env=[
-                client.V1EnvVar(
-                    name='PREFIX',
-                    value=self.task.prefix
-                ),
-                client.V1EnvVar(
-                    name='MINIO_HOST',
-                    value_from=client.V1EnvVarSource(
-                        config_map_key_ref=client.V1ConfigMapKeySelector(
-                            name='atop-globe-config',
-                            key='minio_host'
-                        )
-                    )
-                )
-            ]
-        )
-
-    def builder(self):
-        return client.V1Container(
-            name=self.task.type,
-            image='gcr.io/kaniko-project/executor:latest',
-            args=[
-                "--dockerfile=Dockerfile",
-                f"--context=dir:///{self.task.prefix}",
-                f"--destination={self.task.container.image}"
-            ],
-
-            image_pull_policy='IfNotPresent',
-            ports=[
-            ],
-            volume_mounts=[
-                client.V1VolumeMount(
-                    name='kaniko-secret',
-                    mount_path='/secret'
-                ),
-                client.V1VolumeMount(
-                    name='cache-volume',
-                    mount_path=f'/{self.task.prefix}'
-                )
-            ],
-            env=[
-                client.V1EnvVar(
-                    name='DOCKER_CONFIG',
-                    value='/secret/.docker/'
-                )
-            ]
-        )
 
     def worker(self):
         return client.V1Container(
@@ -95,9 +35,6 @@ class Task():
                 f"{self.task.container.command}; python /atop/script.py"
             ],
             image_pull_policy='IfNotPresent',
-            # ports=[
-            #     client.V1ContainerPort(container_port=9090, name='locust'),
-            # ],
             volume_mounts=[
                 client.V1VolumeMount(
                     name='pusher',
@@ -112,15 +49,11 @@ class Task():
             ],
             env=[
                 client.V1EnvVar(
-                    name='PREFIX',
+                    name='REPORT',
                     value=self.task.prefix
                 ),
                 client.V1EnvVar(
-                    name='UID',
-                    value=self.task.uid
-                ),
-                client.V1EnvVar(
-                    name='POD_NAME',
+                    name='PREFIX',
                     value_from=client.V1EnvVarSource(
                         field_ref=client.V1ObjectFieldSelector(
                             field_path='metadata.name'
@@ -141,28 +74,19 @@ class Task():
 
     def object(self):
 
-        if self.task.type == 'konika':
-            init_containers = [self.puller()]
-            containers = [self.builder()]
-
-        if self.task.type in ['jmeter', 'aomaker', 'locust']:
-            init_containers = []
-            containers = [self.worker()]
-
         obj = client.V1Pod(
             api_version="v1",
             kind="Pod",
             metadata=client.V1ObjectMeta(
-                name=self.task.name,
+                name=f'{self.task.name}-{self.task.uid}',
                 labels={'uid': self.task.uid},
             ),
             spec=client.V1PodSpec(
-                init_containers=init_containers,
-                containers=containers,
+                init_containers=[],
+                containers=[self.worker()],
                 host_network=True,
                 dns_policy='ClusterFirstWithHostNet',
                 restart_policy='Never',
-                # restart_policy='OnFailure',
                 image_pull_secrets=[
                     client.V1LocalObjectReference(
                         name='regcred'
@@ -181,17 +105,6 @@ class Task():
                         )
                     ),
                     client.V1Volume(
-                        name='puller',
-                        config_map=client.V1ConfigMapVolumeSource(
-                            name='puller',
-                            items=[
-                                client.V1KeyToPath(
-                                    key='puller', path='puller.py'
-                                )
-                            ]
-                        ),
-                    ),
-                    client.V1Volume(
                         name='pusher',
                         config_map=client.V1ConfigMapVolumeSource(
                             name='pusher',
@@ -200,10 +113,6 @@ class Task():
                                     key='script', path='script.py')
                             ]
                         )
-                    ),
-                    client.V1Volume(
-                        name='cache-volume',
-                        empty_dir=client.V1EmptyDirVolumeSource()
                     ),
                     client.V1Volume(
                         name='share-volume',

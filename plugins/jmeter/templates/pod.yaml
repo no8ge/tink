@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+  labels:
+    app:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+spec:
+  imagePullSecrets:
+    - name: regcred
+  restartPolicy: Never
+  hostNetwork: True
+  dnsPolicy: ClusterFirstWithHostNet
+  containers:
+    - name:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+      image: "{{ .Values.container.image }}"
+      command: 
+        - 'sh'
+        - '-c'
+      args:
+        - '{{ .Values.container.command }}; python /atop/script.py'
+      # ports:
+      #   - containerPort: 10086
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: REPORT
+          value: {{ .Values.container.report }}
+        - name: PREFIX
+          value: "{{ .Chart.Name }}-{{ .Release.Name }}"
+        - name: MINIO_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: atop-globe-config
+              key: minio_host
+      volumeMounts:
+        - name: pusher
+          readOnly: true
+          mountPath: /atop/script.py
+          subPath: script.py
+  volumes:
+  - name: pusher
+    configMap:
+      name: pusher
+      items:
+        - key: script
+          path: script.py

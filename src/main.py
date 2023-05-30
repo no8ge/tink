@@ -1,20 +1,23 @@
 import traceback
 from loguru import logger
-from datetime import datetime
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.task import Task
 from src.model import Task as TK
-from src.env import ELASTICSEARCH_SERVICE_HOSTS, NAMESPACE
-from src.helper import EsHelper, PrometheusHekper
+from src.env import NAMESPACE
+from src.chart import AsLiteral, yaml
+from src.chart import Chart, ChartError
+from src.model import PodValue, ChartValue
+
+from kubernetes import client
+from kubernetes import config
+from kubernetes.stream import stream
+from kubernetes.client.rest import ApiException
+from kubernetes.config.config_exception import ConfigException
 
 
-index = 'tink'
 app = FastAPI()
-es = EsHelper(ELASTICSEARCH_SERVICE_HOSTS)
-ph = PrometheusHekper()
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,10 +28,22 @@ app.add_middleware(
 )
 
 
+try:
+    config.load_incluster_config()
+    api_instance = client.CoreV1Api()
+except ConfigException as e:
+    if e.args[0] == 'Service host/port is not set.':
+        logger.warning(e)
+        config.load_kube_config()
+        api_instance = client.CoreV1Api()
+except Exception as e:
+    logger.error(traceback.format_exc())
+
+
 @app.on_event("startup")
 async def startup_event():
     try:
-        es.index(index)
+        pass
     except Exception as e:
         logger.debug(e)
 
@@ -38,13 +53,9 @@ async def create_job(task: TK):
     logger.info(task)
     try:
         result = Task(task).create().to_dict()
-        data = task.dict()
-        data['timestamp'] = datetime.now()
-        es.insert(
-            index,
-            task.name,
-            data
-        )
+        del result['metadata']
+        del result['spec']
+        logger.info(result)
         return result
     except Exception as e:
         logger.error(e.body)
@@ -55,6 +66,9 @@ async def create_job(task: TK):
 async def get_job(name):
     try:
         result = Task().get(name).to_dict()
+        del result['metadata']
+        del result['spec']
+        logger.info(result)
         return result
     except Exception as e:
         logger.error(e.body)
@@ -65,39 +79,159 @@ async def get_job(name):
 async def delete_job(name):
     try:
         result = Task().delete(name).to_dict()
-        es.delete(index, name)
+        del result['metadata']
+        del result['spec']
+        logger.info(result)
         return result
     except Exception as e:
         logger.error(e.body)
         raise HTTPException(status_code=e.status, detail=e.reason)
 
 
-@app.get("/tink/jobs")
-async def get_jobs(_from: int, size: int):
-    result = es.search(index, {}, _from, size, mod='match_all')
-    resp = {}
-    total = result['hits']['total']['value']
-    hits = result['hits']['hits']
-    _sources = list(map(lambda x: x['_source'], hits))
-    resp['total'] = total
-    resp['_sources'] = _sources
-    return resp
+@app.post("/tink/v1.1/chart")
+async def chart_install(value: ChartValue):
+    logger.info(value)
+    try:
+        result = Chart(value).install()
+        return result
+    except ChartError as e:
+        raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
 
 
-@app.get('/tink/metrics', response_class=PlainTextResponse)
-async def metrics():
-    status_map = {
-        'Running': 0,
-        'Succeeded': 1,
-        'Pending': 2,
-        'Failed': 3,
-        'Unknown': 4,
-    }
-    result = es.search(index, {}, 0, 10000, mod='match_all')
-    _sources = list(map(lambda x: x['_source'], result['hits']['hits']))
-    for s in _sources:
-        resp = Task().get(s['name']).to_dict()
-        s['status'] = resp['status']['phase']
-        es.update(index, s['name'], s)
-        ph.tink_task_status.labels(s['name'], s['type'], NAMESPACE).set(status_map[s['status']])
-    return ph.generate_latest()
+@app.patch("/tink/v1.1/chart")
+async def chart_upgrade(value: ChartValue):
+    logger.info(value)
+    try:
+        result = Chart(value).upgrade()
+        return result
+    except ChartError as e:
+        raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
+
+
+@app.delete("/tink/v1.1/chart")
+async def chart_uninstall(value: ChartValue):
+    logger.info(value)
+    try:
+        result = Chart(value).uninstall()
+        return result
+    except ChartError as e:
+        raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
+
+
+@app.get("/tink/v1.1/charts")
+async def chart_list(value: ChartValue):
+    logger.info(value)
+    try:
+        result = Chart(value).list()
+        return result
+    except ChartError as e:
+        raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
+
+
+@app.get("/tink/v1.1/pod")
+async def pod_list(value: PodValue):
+    logger.info(value)
+    try:
+        result = api_instance.read_namespaced_pod(
+            name=f'{value.type}-{value.uid}',
+            namespace=NAMESPACE
+        ).to_dict()
+        del result['metadata']
+        del result['spec']
+        logger.info(result)
+        return result
+    except ApiException as e:
+        logger.error(e.body)
+        raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
+
+
+@app.delete("/tink/v1.1/pod")
+async def pod_delete(value: PodValue):
+    logger.info(value)
+    try:
+        result = api_instance.delete_namespaced_pod(
+            name=f'{value.type}-{value.uid}',
+            namespace=NAMESPACE
+        ).to_dict()
+        del result['metadata']
+        del result['spec']
+        logger.info(result)
+        return result
+    except ApiException as e:
+        logger.error(e.body)
+        raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
+
+
+@app.post("/tink/v1.1/pod/exec")
+async def exec(value: PodValue):
+    logger.info(value)
+    try:
+        exec_command = [
+            '/bin/sh',
+            '-c',
+            value.cmd
+        ]
+        resp = stream(
+            api_instance.connect_get_namespaced_pod_exec,
+            f'{value.type}-{value.uid}',
+            NAMESPACE,
+            command=exec_command,
+            stderr=True,
+            stdin=False,
+            stdout=True,
+            tty=False
+        )
+        logger.info(resp)
+        return resp
+    except ApiException as e:
+        logger.error(traceback.format_exc())
+        if e.status == 0:
+            raise HTTPException(status_code=500, detail=e.reason)
+        raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
+
+
+@app.patch("/tink/v1.1/pod/configmap")
+async def configmap_update(value: PodValue):
+    logger.info(value)
+    try:
+        testbed = value.configmap.testbed
+        testcases = value.configmap.testcases
+        data = {
+
+            'testbed.yaml': AsLiteral(yaml.dump(testbed)),
+            'testcases.yaml': AsLiteral(yaml.dump(testcases))
+        }
+        resp = api_instance.patch_namespaced_config_map(
+            name=f'{value.type}-{value.uid}',
+            namespace=NAMESPACE,
+            body={'data': data}
+        ).to_dict()
+        logger.info(resp)
+        return resp
+    except ApiException as e:
+        logger.error(e.body)
+        raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
