@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+  labels:
+    app:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+spec:
+  imagePullSecrets:
+    - name: regcred
+  restartPolicy: OnFailure
+  hostNetwork: True
+  dnsPolicy: ClusterFirstWithHostNet
+  containers:
+    - name:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+      image: "{{ .Values.container.image }}"
+      command: 
+        - 'sh'
+        - '-c'
+      args:
+        - '{{ .Values.container.command }}; python /atop/script.py'
+      # ports:
+      #   - containerPort: 10086
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: REPORT
+          value: "{{ .Values.container.report }}"
+        - name: PREFIX
+          value: "{{ .Chart.Name }}-{{ .Release.Name }}"
+        - name: MINIO_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: atop-globe-config
+              key: minio_host
+      volumeMounts:
+        - name: pusher
+          readOnly: true
+          mountPath: /atop/script.py
+          subPath: script.py
+        - name: hatbox-config
+          mountPath: /hatbox/Config/scenario_conf
+        - name: share-volume
+          mountPath: /report
+  volumes:
+  - name: pusher
+    configMap:
+      name: pusher
+      items:
+        - key: script
+          path: script.py
+  - name: hatbox-config
+    configMap:
+      name: "{{ .Chart.Name }}-{{ .Release.Name }}"
+      items:
+        - key: testbed.yaml
+          path: hat_TestBed.yaml
+        - key: testcases.yaml
+          path: hat_TestCases.yaml
+  - name: share-volume
+    hostPath: 
+      path: /atop/share
+

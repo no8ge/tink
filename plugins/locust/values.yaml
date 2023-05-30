@@ -1,0 +1,7 @@
+container:
+  image: "dockerhub.qingcloud.com/qingtest/demo:1.0"
+  command: "locust -f src --class-picker"
+  report: /data/autotest/reports
+
+
+

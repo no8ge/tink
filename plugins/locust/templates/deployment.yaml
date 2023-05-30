@@ -1,0 +1,74 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+  labels:
+    app:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+  annotations:
+    prometheus.io/scrape: 'false'
+    prometheus.io/path: '/metrics'
+    prometheus.io/port: '8090'
+spec:
+  selector:
+    app:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+  ports:
+    - protocol: TCP
+      port: 8089
+      targetPort: 8089
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+  labels:
+    app:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+  template:
+    metadata:
+      labels:
+        app:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always
+      containers:
+        - name:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+          image: "{{ .Values.container.image }}"
+          command: 
+           - 'sh'
+           - '-c'
+          args:
+            - {{ .Values.container.command }}
+          ports:
+            - containerPort: 8089
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          env:
+            - name: NAMESPACE
+              value: {{ .Release.Namespace | quote }}
+            - name: REPORT
+              value: "{{ .Values.container.report }}"
+            - name: PREFIX
+              value: "{{ .Chart.Name }}-{{ .Release.Name }}"
+            - name: MINIO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: atop-globe-config
+                  key: minio_host
+          volumeMounts:
+            - name: pusher
+              readOnly: true
+              mountPath: /atop/script.py
+              subPath: script.py
+      volumes:
+      - name: pusher
+        configMap:
+          name: pusher
+          items:
+            - key: script
+              path: script.py

@@ -1,20 +1,15 @@
-"""
-Night's Watch for worker
-"""
-
 import os
-
 from minio import Minio
 from pprint import pprint
-from minio.error import InvalidResponseError
 
+
+report = os.getenv('REPORT')
 prefix = os.getenv('PREFIX')
-pod_name = os.getenv('POD_NAME')
-uid =  os.getenv('UID')
+minio_host = os.getenv('MINIO_HOST')
 
 
 minioClient = Minio(
-    '127.0.0.1:9000',
+    minio_host,
     access_key='admin',
     secret_key='changeme',
     secure=False
@@ -30,40 +25,15 @@ def get_all_abs_path(source_dir):
     return path_list
 
 
-def pull(bucket_name: str, prefix: str):
-    try:
-        objects = minioClient.list_objects(
-            bucket_name,
-            prefix=prefix,
-            recursive=True
-        )
-        for obj in objects:
-            pprint(
-                [
-                    obj.bucket_name,
-                    obj.object_name.encode('utf-8'),
-                    obj.last_modified,
-                    obj.etag,
-                    obj.size,
-                    obj.content_type
-                ]
-            )
-            minioClient.fget_object(
-                bucket_name, obj.object_name, f'{obj.object_name}')
-    except InvalidResponseError as err:
-        pprint(err)
-
-
 def push(bucket_name, prefix):
     try:
-        if os.path.isdir(prefix):
-            object_list = get_all_abs_path(prefix)
+        if os.path.isdir(report):
+            object_list = get_all_abs_path(report)
         else:
-            object_list = [prefix]
+            object_list = [report]
         for key in object_list:
-            minioClient.fput_object(bucket_name, pod_name+uid+key, key)
-            pprint(f'push: {key}')
-        pprint(f'push done')
+            minioClient.fput_object(bucket_name, f'{prefix}{key}', key)
+        pprint('push done')
     except Exception as err:
         pprint(err)
 
@@ -72,7 +42,12 @@ if __name__ == "__main__":
     if prefix == '':
         pass
     else:
-        if os.path.exists(prefix):
-            push('result', prefix)
+        if os.path.exists(report):
+            try:
+                push('result', prefix)
+                os.system(f"mkdir -p /report/{prefix}{report}")
+                os.system(f"/bin/cp -rf {report}/* /report/{prefix}{report}")
+            except Exception as err:
+                pprint(err)
         else:
             pprint('report not exists')

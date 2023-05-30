@@ -1,0 +1,4 @@
+container:
+  image: "dockerhub.qingcloud.com/qingtest/hatbox_base:v1.0.0"
+  command: "sleep 50m"
+  report: /data/autotest/reports

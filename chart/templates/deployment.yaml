@@ -34,10 +34,8 @@ spec:
       labels:
         app:  "{{ .Release.Name }}-{{ .Chart.Name }}"
     spec:
-{{- if .Values.private }}
       imagePullSecrets:
         - name: regcred
-{{- end }}
       containers:
         - name:  "{{ .Release.Name }}-{{ .Chart.Name }}"
           image: "{{ .Values.registry }}/{{ .Values.repository }}/{{ .Values.image }}"
@@ -56,8 +54,3 @@ spec:
           env:
             - name: NAMESPACE
               value: {{ .Release.Namespace | quote }}
-            - name: ELASTICSEARCH_SERVICE_HOSTS
-              valueFrom:
-                configMapKeyRef:
-                  name: atop-globe-config
-                  key: elasticsearch_service_hosts

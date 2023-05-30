@@ -1,0 +1,4 @@
+container:
+  image: "mx2542/demo:latest"
+  command: "apache-jmeter-5.4.3/bin/jmeter -n -t src/demo.jmx -l report/test.jtl -e -o report"
+  report: /demo/report
