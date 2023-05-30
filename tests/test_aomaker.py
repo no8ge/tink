@@ -46,9 +46,7 @@ class TestOk():
         payload = {
             'index': 'logs',
             'key_words': {
-                'pod.name': self.id,
-                'container.name': 'aomaker',
-                'labels.uid': self.uid
+                'kubernetes.labels.uid': self.uid
             },
             "from_": 0,
             "size": 200,
@@ -65,9 +63,7 @@ class TestOk():
         payload = {
             'index': 'logs',
             'key_words': {
-                'pod.name': self.id,
-                'container.name': 'aomaker',
-                'labels.uid': self.uid
+                'kubernetes.labels.uid': self.uid
             },
             "from_": 0,
             "size": 200,
@@ -86,17 +82,20 @@ class TestOk():
 
     def test_get_report(self):
         resp = self.bs.get(
-            f'/files/report/result/aomaker/{self.id}-{self.uid}', headers=self.header)
+            f'/files/report/result/aomaker/{self.id}-{self.uid}',
+            headers=self.header
+        )
         assert resp.status_code == 200
 
     def test_get_object(self):
         resp = self.bs.get(
             '/files/',
             params={
-                "prefix": "lunz-091143e5-464e-4704-8438-04ecc98f4b1a/data/autotest/reports/html/widgets/summary.json",
+                "prefix": f"{self.id}-{self.uid}/data/autotest/reports/html/widgets/summary.json",
                 'bucket_name': 'result'
             },
-            headers=self.header)
+            headers=self.header
+        )
         assert resp.status_code == 200
 
     def test_delete_job(self):

@@ -65,7 +65,6 @@ class TestTink():
             "uid": self.uid,
             "name": 'test',
             "type": "hatbox",
-            'cmd': 'echo 123'
         }
         resp = self.bs.get(
             '/tink/v1.1/pod',
