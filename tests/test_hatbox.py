@@ -6,7 +6,7 @@ from pprint import pprint
 
 
 @pytest.mark.usefixtures('init')
-class TestTink():
+class TestHatbox():
     uid = '091143e5-464e-4704-8438-04ecc98f4b1a'
 
     payload = {
