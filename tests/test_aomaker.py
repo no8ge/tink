@@ -7,7 +7,7 @@ from pprint import pprint
 @pytest.mark.usefixtures('init')
 class TestAomaker():
 
-    id = 'lunz'
+    name = 'lunz'
     uid = '091143e5-464e-4704-8438-04ecc98f4b1a'
 
     header = {
@@ -17,7 +17,7 @@ class TestAomaker():
     def test_create_aomaker(self):
         payload = {
             "type": "aomaker",
-            "name": self.id,
+            "name": self.name,
             "uid": self.uid,
             'container': {
                 'image': 'dockerhub.qingcloud.com/listen/hpc:4.0',
@@ -35,7 +35,7 @@ class TestAomaker():
 
     def test_get_job(self):
         resp = self.bs.get(
-            f'/{self.env}/tink/job/{self.id}-{self.uid}',
+            f'/{self.env}/tink/job/{self.name}',
             headers=self.header
         )
         status = resp.json()['status']['phase']
@@ -82,7 +82,7 @@ class TestAomaker():
 
     def test_get_report(self):
         resp = self.bs.get(
-            f'/{self.env}/files/report/result/aomaker/{self.id}-{self.uid}',
+            f'/{self.env}/files/report/result/aomaker/{self.name}',
             headers=self.header
         )
         assert resp.status_code == 200
@@ -91,7 +91,7 @@ class TestAomaker():
         resp = self.bs.get(
             f'/{self.env}/files/',
             params={
-                "prefix": f"{self.id}-{self.uid}/data/autotest/reports/html/widgets/summary.json",
+                "prefix": f"{self.name}/data/autotest/reports/html/widgets/summary.json",
                 'bucket_name': 'result'
             },
             headers=self.header
@@ -100,7 +100,7 @@ class TestAomaker():
 
     def test_delete_job(self):
         resp = self.bs.delete(
-            f'/{self.env}/tink/job/{self.id}-{self.uid}',
+            f'/{self.env}/tink/job/{self.name}',
             headers=self.header
         )
         assert resp.status_code == 200

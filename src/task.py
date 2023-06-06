@@ -78,7 +78,7 @@ class Task():
             api_version="v1",
             kind="Pod",
             metadata=client.V1ObjectMeta(
-                name=f'{self.task.name}-{self.task.uid}',
+                name=f'{self.task.name}',
                 labels={'uid': self.task.uid},
             ),
             spec=client.V1PodSpec(
