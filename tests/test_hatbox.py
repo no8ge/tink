@@ -30,7 +30,7 @@ class TestHatbox():
 
     def test_install_chart(self):
         resp = self.bs.post(
-            '/tink/v1.1/chart',
+            f'/{self.env}/tink/v1.1/chart',
             json=self.payload,
             headers=self.header
         )
@@ -38,7 +38,7 @@ class TestHatbox():
 
     def test_upgrade_chart(self):
         resp = self.bs.patch(
-            '/tink/v1.1/chart',
+            f'/{self.env}/tink/v1.1/chart',
             json=self.payload,
             headers=self.header
         )
@@ -46,7 +46,7 @@ class TestHatbox():
 
     def test_uninstall_chart(self):
         resp = self.bs.delete(
-            '/tink/v1.1/chart',
+            f'/{self.env}/tink/v1.1/chart',
             json=self.payload,
             headers=self.header
         )
@@ -54,7 +54,7 @@ class TestHatbox():
 
     def test_list_chart(self):
         resp = self.bs.get(
-            '/tink/v1.1/charts',
+            f'/{self.env}/tink/v1.1/charts',
             json=self.payload,
             headers=self.header
         )
@@ -67,7 +67,7 @@ class TestHatbox():
             "type": "hatbox",
         }
         resp = self.bs.get(
-            '/tink/v1.1/pod',
+            f'/{self.env}/tink/v1.1/pod',
             json=payload,
             headers=self.header
         )
@@ -80,7 +80,7 @@ class TestHatbox():
             "type": "hatbox",
         }
         resp = self.bs.delete(
-            '/tink/v1.1/pod',
+            f'/{self.env}/tink/v1.1/pod',
             json=payload,
             headers=self.header
         )
@@ -94,7 +94,7 @@ class TestHatbox():
             'cmd': 'echo 123'
         }
         resp = self.bs.post(
-            '/tink/v1.1/pod/exec',
+            f'/{self.env}/tink/v1.1/pod/exec',
             json=payload,
             headers=self.header
         )
@@ -111,7 +111,7 @@ class TestHatbox():
             },
         }
         resp = self.bs.patch(
-            '/tink/v1.1/pod/configmap',
+            f'/{self.env}/tink/v1.1/pod/configmap',
             json=payload,
             headers=self.header
         )
@@ -129,7 +129,7 @@ class TestHatbox():
         }
 
         resp = self.bs.post(
-            '/analysis/raw',
+            f'/{self.env}/analysis/raw',
             headers=self.header,
             json=payload
         )
@@ -163,7 +163,7 @@ class TestHatbox():
             'path': self.payload['container']['report']
         }
         resp = self.bs.get(
-            '/files/v1.1/report',
+            f'/{self.env}/files/v1.1/report',
             json=payload,
             headers=self.header
         )
@@ -171,7 +171,7 @@ class TestHatbox():
 
     def test_get_object(self):
         resp = self.bs.get(
-            '/files/v1.1',
+            f'/{self.env}/files/v1.1',
             params={
                 "prefix": f"{self.payload['type']}-{self.uid}/hatbox/Log/report/pytest_html/widgets/summary.json",
                 'bucket_name': 'result'

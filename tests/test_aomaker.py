@@ -27,7 +27,7 @@ class TestAomaker():
         }
 
         resp = self.bs.post(
-            '/tink/job',
+            f'/{self.env}/tink/job',
             json=payload,
             headers=self.header
         )
@@ -35,7 +35,7 @@ class TestAomaker():
 
     def test_get_job(self):
         resp = self.bs.get(
-            f'/tink/job/{self.id}-{self.uid}',
+            f'/{self.env}/tink/job/{self.id}-{self.uid}',
             headers=self.header
         )
         status = resp.json()['status']['phase']
@@ -53,7 +53,7 @@ class TestAomaker():
         }
 
         resp = self.bs.post(
-            '/analysis/raw',
+            f'/{self.env}/analysis/raw',
             headers=self.header,
             json=payload
         )
@@ -82,14 +82,14 @@ class TestAomaker():
 
     def test_get_report(self):
         resp = self.bs.get(
-            f'/files/report/result/aomaker/{self.id}-{self.uid}',
+            f'/{self.env}/files/report/result/aomaker/{self.id}-{self.uid}',
             headers=self.header
         )
         assert resp.status_code == 200
 
     def test_get_object(self):
         resp = self.bs.get(
-            '/files/',
+            f'/{self.env}/files/',
             params={
                 "prefix": f"{self.id}-{self.uid}/data/autotest/reports/html/widgets/summary.json",
                 'bucket_name': 'result'
@@ -100,7 +100,7 @@ class TestAomaker():
 
     def test_delete_job(self):
         resp = self.bs.delete(
-            f'/tink/job/{self.id}-{self.uid}',
+            f'/{self.env}/tink/job/{self.id}-{self.uid}',
             headers=self.header
         )
         assert resp.status_code == 200

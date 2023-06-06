@@ -12,9 +12,24 @@ class Container(BaseModel):
 class Task(BaseModel):
     type: str
     name: str
-    uid: Union[str, None] = None
+    uid: Union[str, uuid.UUID]
     container: Container
     prefix: Union[str, None] = None
+
+    @validator('name')
+    def check_name(cls, name):
+        if len(name) > 253:
+            raise ValueError('Name must not exceed 253 characters')
+        elif not re.match(r'^[a-z0-9][a-z0-9\-\.]*[a-z0-9]$', name):
+            raise ValueError(
+                'Name must start and end with a lowercase letter or number and contain only lowercase letters, numbers, dash (-), and dot (.)')
+        return name
+
+    @validator('type')
+    def check_type(cls, type):
+        if type not in ["aomaker", "hatbox"]:
+            raise ValueError('Type must be aomaker or hatbox')
+        return type
 
 
 class ContainerValue(BaseModel):
