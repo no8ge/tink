@@ -11,7 +11,7 @@ spec:
   hostNetwork: True
   dnsPolicy: ClusterFirstWithHostNet
   containers:
-    - name:  "{{ .Chart.Name }}-{{ .Release.Name }}"
+    - name:  "{{ .Chart.Name }}"
       image: "{{ .Values.container.image }}"
       command: 
         - 'sh'

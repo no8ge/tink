@@ -24,39 +24,31 @@ class TestHatbox():
         },
     }
 
-    header = {
-        "Authorization": "admin"
-    }
-
     def test_install_chart(self):
         resp = self.bs.post(
-            f'/{self.env}/tink/v1.1/chart',
-            json=self.payload,
-            headers=self.header
+            f'{self.url}/tink/v1.1/chart',
+            json=self.payload
         )
         assert resp.status_code == 200
 
     def test_upgrade_chart(self):
         resp = self.bs.patch(
-            f'/{self.env}/tink/v1.1/chart',
-            json=self.payload,
-            headers=self.header
+            f'{self.url}/tink/v1.1/chart',
+            json=self.payload
         )
         assert resp.status_code == 200
 
     def test_uninstall_chart(self):
         resp = self.bs.delete(
-            f'/{self.env}/tink/v1.1/chart',
-            json=self.payload,
-            headers=self.header
+            f'{self.url}/tink/v1.1/chart',
+            json=self.payload
         )
         assert resp.status_code == 200
 
     def test_list_chart(self):
         resp = self.bs.get(
-            f'/{self.env}/tink/v1.1/charts',
-            json=self.payload,
-            headers=self.header
+            f'{self.url}/tink/v1.1/charts',
+            json=self.payload
         )
         assert resp.status_code == 200
 
@@ -67,9 +59,8 @@ class TestHatbox():
             "type": "hatbox",
         }
         resp = self.bs.get(
-            f'/{self.env}/tink/v1.1/pod',
-            json=payload,
-            headers=self.header
+            f'{self.url}/tink/v1.1/pod',
+            json=payload
         )
         assert resp.status_code == 200
 
@@ -80,9 +71,8 @@ class TestHatbox():
             "type": "hatbox",
         }
         resp = self.bs.delete(
-            f'/{self.env}/tink/v1.1/pod',
-            json=payload,
-            headers=self.header
+            f'{self.url}/tink/v1.1/pod',
+            json=payload
         )
         assert resp.status_code == 200
 
@@ -94,9 +84,8 @@ class TestHatbox():
             'cmd': 'echo 123'
         }
         resp = self.bs.post(
-            f'/{self.env}/tink/v1.1/pod/exec',
-            json=payload,
-            headers=self.header
+            f'{self.url}/tink/v1.1/pod/exec',
+            json=payload
         )
         assert resp.status_code == 200
 
@@ -111,9 +100,8 @@ class TestHatbox():
             },
         }
         resp = self.bs.patch(
-            f'/{self.env}/tink/v1.1/pod/configmap',
-            json=payload,
-            headers=self.header
+            f'{self.url}/tink/v1.1/pod/configmap',
+            json=payload
         )
         assert resp.status_code == 200
 
@@ -129,8 +117,7 @@ class TestHatbox():
         }
 
         resp = self.bs.post(
-            f'/{self.env}/analysis/raw',
-            headers=self.header,
+            f'{self.url}/analysis/raw',
             json=payload
         )
         pprint(resp.json())
@@ -148,8 +135,7 @@ class TestHatbox():
 
         ws = websocket.WebSocket()
         ws.connect(
-            self.ws_url,
-            header=self.header
+            f'{self.ws_url}/analysis/ws/raw',
         )
         ws.send(json.dumps(payload))
         resp = ws.recv()
@@ -163,19 +149,17 @@ class TestHatbox():
             'path': self.payload['container']['report']
         }
         resp = self.bs.get(
-            f'/{self.env}/files/v1.1/report',
-            json=payload,
-            headers=self.header
+            f'{self.url}/files/v1.1/report',
+            json=payload
         )
         assert resp.status_code == 200
 
     def test_get_object(self):
         resp = self.bs.get(
-            f'/{self.env}/files/v1.1',
+            f'{self.url}/files/v1.1',
             params={
                 "prefix": f"{self.payload['type']}-{self.uid}/hatbox/Log/report/pytest_html/widgets/summary.json",
                 'bucket_name': 'result'
-            },
-            headers=self.header
+            }
         )
         assert resp.status_code == 200
