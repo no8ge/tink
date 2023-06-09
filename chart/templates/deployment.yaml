@@ -50,7 +50,7 @@ spec:
             - "--log-config=uvicorn_config.json"
           ports:
             - containerPort: 8003
-          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          imagePullPolicy: Always
           env:
             - name: NAMESPACE
               value: {{ .Release.Namespace | quote }}

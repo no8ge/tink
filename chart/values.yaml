@@ -1,5 +1,3 @@
-registry: docker.io
-repository: mx2542
-image: "tink:latest"
-imagePullPolicy: Always
-private: false
+registry: dockerhub.qingcloud.com
+repository: qingtest
+image: tink:1.4
