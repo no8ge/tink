@@ -1,17 +1,20 @@
+import json
 import traceback
+from typing import List
 from loguru import logger
-from fastapi import FastAPI, HTTPException
+from types import SimpleNamespace
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.task import Task
-from src.model import Task as TK
 from src.env import NAMESPACE
 from src.chart import AsLiteral, yaml
 from src.chart import Chart, ChartError
+from src.model import LogValue, Task as TK
 from src.model import PodValue, ChartValue
 
 from kubernetes import client
-from kubernetes import config
+from kubernetes import config, watch
 from kubernetes.stream import stream
 from kubernetes.client.rest import ApiException
 from kubernetes.config.config_exception import ConfigException
@@ -26,6 +29,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def send_personal_message(self, message: str, websocket: WebSocket):
+        await websocket.send_json(message)
+
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+
+manager = ConnectionManager()
 
 
 try:
@@ -170,6 +195,28 @@ async def pod_delete(value: PodValue):
         ).to_dict()
         del result['metadata']
         del result['spec']
+        logger.info(result)
+        return result
+    except ApiException as e:
+        logger.error(e.body)
+        raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
+
+
+@app.get("/tink/v1.1/pod/log")
+async def pod_log(value: LogValue):
+    logger.info(value)
+    try:
+        result = api_instance.read_namespaced_pod_log(
+            name=value.pod,
+            namespace=NAMESPACE,
+            container=value.container,
+            tail_lines=value.tail_lines,
+            follow=value.follow,
+            _preload_content=value._preload_content
+        )
         logger.info(result)
         return result
     except ApiException as e:

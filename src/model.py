@@ -1,6 +1,6 @@
 import re
 import uuid
-from typing import Any, Union
+from typing import Optional, Union
 from pydantic import BaseModel, validator
 
 
@@ -117,3 +117,11 @@ class PodValue(BaseModel):
         if type == "hatbox" and configmap == None:
             raise ValueError('Configmap must not be None')
         return configmap
+
+
+class LogValue(BaseModel):
+    pod: str
+    container: str
+    tail_lines: Optional[int] = None
+    follow: Optional[bool] = False
+    _preload_content: Optional[bool] = True

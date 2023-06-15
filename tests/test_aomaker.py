@@ -2,6 +2,7 @@ import json
 import pytest
 import websocket
 from pprint import pprint
+from loguru import logger
 
 
 @pytest.mark.usefixtures('init')
@@ -9,7 +10,7 @@ class TestAomaker():
 
     payload = {
         "type": "aomaker",
-        "name": 'lunz',
+        "name": 'test',
         "uid": '091143e5-464e-4704-8438-04ecc98f4b1a',
         'container': {
             'image': 'dockerhub.qingcloud.com/listen/hpc:4.0',
@@ -37,12 +38,14 @@ class TestAomaker():
 
     def test_msg(self):
         payload = {
-            'index': 'logs',
+            'index': 'atop',
             'key_words': {
-                'kubernetes.labels.uid': self.payload['uid']
+                'pod.name': self.name,
+                'container.name': 'aomaker',
+                # 'labels.uid': self.payload['uid']
             },
             "from_": 0,
-            "size": 200,
+            "size": 100,
         }
 
         resp = self.bs.post(
@@ -91,4 +94,19 @@ class TestAomaker():
         resp = self.bs.delete(
             f'{self.url}/tink/job/{self.name}'
         )
+        assert resp.status_code == 200
+
+    def test_container_log(self):
+        payload = {
+            'pod': self.name,
+            'container': 'aomaker',
+            'tail_lines': 10,
+        }
+
+        resp = self.bs.get(
+            f'{self.url}/tink/v1.1/pod/log',
+            json=payload
+        )
+        result = resp.text.split("\\n")
+        pprint(result)
         assert resp.status_code == 200
