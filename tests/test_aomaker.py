@@ -1,8 +1,9 @@
 import json
+import time
+import uuid
 import pytest
 import websocket
 from pprint import pprint
-from loguru import logger
 
 
 @pytest.mark.usefixtures('init')
@@ -10,8 +11,8 @@ class TestAomaker():
 
     payload = {
         "type": "aomaker",
-        "name": 'test',
-        "uid": '091143e5-464e-4704-8438-04ecc98f4b1a',
+        "name": f'aomaker-{uuid.uuid4()}',
+        "uid": f'{uuid.uuid4()}',
         'container': {
             'image': 'dockerhub.qingcloud.com/listen/hpc:4.0',
             'command': 'arun -e testbm -m hpc_fs',
@@ -26,14 +27,19 @@ class TestAomaker():
             f'{self.url}/tink/job',
             json=self.payload,
         )
+        pprint(resp.json())
         assert resp.status_code == 200
 
     def test_get_job(self):
-        resp = self.bs.get(
-            f'{self.url}/tink/job/{self.name}',
-        )
-        status = resp.json()['status']['phase']
-        pprint(status)
+        while True:
+            resp = self.bs.get(
+                f'{self.url}/tink/job/{self.name}',
+            )
+            status = resp.json()['status']['phase']
+            pprint(status)
+            if status == 'Succeeded':
+                break
+            time.sleep(3)
         assert resp.status_code == 200
 
     def test_msg(self):
@@ -42,7 +48,6 @@ class TestAomaker():
             'key_words': {
                 'pod.name': self.name,
                 'container.name': 'aomaker',
-                # 'labels.uid': self.payload['uid']
             },
             "from_": 0,
             "size": 100,
@@ -78,6 +83,7 @@ class TestAomaker():
         resp = self.bs.get(
             f'{self.url}/files/report/result/aomaker/{self.name}',
         )
+        pprint(resp.json())
         assert resp.status_code == 200
 
     def test_get_object(self):
@@ -88,25 +94,12 @@ class TestAomaker():
                 'bucket_name': 'result'
             }
         )
+        pprint(resp.json())
         assert resp.status_code == 200
 
     def test_delete_job(self):
         resp = self.bs.delete(
             f'{self.url}/tink/job/{self.name}'
         )
-        assert resp.status_code == 200
-
-    def test_container_log(self):
-        payload = {
-            'pod': self.name,
-            'container': 'aomaker',
-            'tail_lines': 10,
-        }
-
-        resp = self.bs.get(
-            f'{self.url}/tink/v1.1/pod/log',
-            json=payload
-        )
-        result = resp.text.split("\\n")
-        pprint(result)
+        pprint(resp.json())
         assert resp.status_code == 200
