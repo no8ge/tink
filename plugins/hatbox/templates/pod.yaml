@@ -20,7 +20,7 @@ spec:
         - '{{ .Values.container.command }}; python /atop/script.py'
       # ports:
       #   - containerPort: 10086
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always
       env:
         - name: REPORT
           value: "{{ .Values.container.report }}"
