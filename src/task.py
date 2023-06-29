@@ -117,7 +117,7 @@ class Task():
                     client.V1Volume(
                         name='share-volume',
                         host_path=client.V1HostPathVolumeSource(
-                            path='/atop/share'
+                            path='/data/atop/share'
                         )
                     ),
                 ]
