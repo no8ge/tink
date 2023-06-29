@@ -17,7 +17,7 @@ class TestAomaker():
             'image': 'dockerhub.qingcloud.com/listen/hpc:4.0',
             'command': 'arun -e testbm -m hpc_fs',
         },
-        'prefix': '/data/autotest/reports/html'
+        'prefix': '/data/autotest/reports'
     }
 
     name = payload['name']
