@@ -116,8 +116,8 @@ class Task():
                     ),
                     client.V1Volume(
                         name='share-volume',
-                        host_path=client.V1HostPathVolumeSource(
-                            path='/data/atop/share'
+                        persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
+                            claim_name='data-atop-reports'
                         )
                     ),
                 ]
