@@ -56,6 +56,5 @@ spec:
         - key: testcases.yaml
           path: hat_TestCases.yaml
   - name: share-volume
-    hostPath: 
-      path: /data/atop/share
-
+    persistentVolumeClaim:
+      claimName: data-atop-reports

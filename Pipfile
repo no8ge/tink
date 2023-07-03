@@ -69,5 +69,5 @@ python_version = "3.10"
 
 [scripts]
 chart = "sh scripts/push-chart.sh"
-docker = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:1.4 . --push"
+docker = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:1.0.3 . --push"
 aomaker = "pipenv run pytest tests/test_aomaker.py -s -v"

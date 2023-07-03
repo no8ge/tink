@@ -38,7 +38,7 @@ spec:
         - name: regcred
       containers:
         - name:  "{{ .Release.Name }}-{{ .Chart.Name }}"
-          image: "{{ .Values.registry }}/{{ .Values.repository }}/{{ .Values.image }}"
+          image: "{{ .Values.registry }}/{{ .Values.repository }}/{{ .Values.image }}:{{ .Chart.AppVersion}}"
           command:
             - "uvicorn"
           args:
