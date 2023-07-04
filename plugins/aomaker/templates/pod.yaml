@@ -36,6 +36,8 @@ spec:
           readOnly: true
           mountPath: /atop/script.py
           subPath: script.py
+        - name: share-volume
+          mountPath: /report
   volumes:
   - name: pusher
     configMap:
@@ -43,3 +45,6 @@ spec:
       items:
         - key: script
           path: script.py
+  - name: share-volume
+    persistentVolumeClaim:
+      claimName: data-atop-reports
