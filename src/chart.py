@@ -54,7 +54,7 @@ class Chart():
 
     def install(self):
         proc = subprocess.Popen(
-            f'helm install {self.release} plugins/{self.value.type} -n {NAMESPACE}  -f {self.release}.yaml -o json ',
+            f'helm upgrade --install {self.release} plugins/{self.value.type} -n {NAMESPACE}  -f {self.release}.yaml -o json ',
             stdin=None,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

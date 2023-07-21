@@ -241,6 +241,7 @@ async def exec(value: PodValue):
             f'{value.type}-{value.uid}',
             NAMESPACE,
             command=exec_command,
+            container=value.container,
             stderr=True,
             stdin=False,
             stdout=True,

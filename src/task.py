@@ -32,15 +32,15 @@ class Task():
             command=['bash'],
             args=[
                 "-c",
-                f"{self.task.container.command}; python /atop/script.py"
+                f"{self.task.container.command}; python /atop/cli.py"
             ],
             image_pull_policy='IfNotPresent',
             volume_mounts=[
                 client.V1VolumeMount(
-                    name='pusher',
+                    name='config',
                     read_only=True,
-                    mount_path='/atop/script.py',
-                    sub_path='script.py'
+                    mount_path='/atop/cli.py',
+                    sub_path='cli.py'
                 ),
                 client.V1VolumeMount(
                     name='share-volume',
@@ -68,6 +68,15 @@ class Task():
                             key='minio_host'
                         )
                     )
+                ),
+                client.V1EnvVar(
+                    name='FILES_SERVICE',
+                    value_from=client.V1EnvVarSource(
+                        config_map_key_ref=client.V1ConfigMapKeySelector(
+                            name='atop-globe-config',
+                            key='files_service_hosts'
+                        )
+                    )
                 )
             ]
         )
@@ -84,7 +93,45 @@ class Task():
             spec=client.V1PodSpec(
                 init_containers=[],
                 containers=[self.worker()],
-                host_network=True,
+                # host_network=True,
+                host_aliases=[
+                    client.V1HostAlias(
+                        ip='192.168.20.11',
+                        hostnames=[
+                            'bm-fb'
+                        ]
+                    ),
+                    client.V1HostAlias(
+                        ip='192.168.20.12',
+                        hostnames=[
+                            'console.testbmcloud.com',
+                            'appcenter.testbmcloud.com',
+                            'api.testbmcloud.com',
+                            'docs.testbmcloud.com',
+                            'docsv3.testbmcloud.com',
+                            'docsv3em.testbmcloud.com'
+                            'boss.testbmcloud.com',
+                            'cb0testbm1a.testbmcloud.com'
+                        ]
+                    ),
+                    client.V1HostAlias(
+                        ip='192.168.20.13',
+                        hostnames=[
+                            'cb1testbm1a.testbmcloud.com'
+                        ]
+                    ),
+                    client.V1HostAlias(
+                        ip='192.168.31.3',
+                        hostnames=[
+                            'console.testepcloud.com',
+                            'appcenter.testepcloud.com',
+                            'api.testepcloud.com',
+                            'docs.testepcloud.com',
+                            'docsv3.testepcloud.com',
+                            'docsv3em.testepcloud.com'
+                        ]
+                    ),
+                ],
                 dns_policy='ClusterFirstWithHostNet',
                 restart_policy='Never',
                 image_pull_secrets=[
@@ -105,12 +152,12 @@ class Task():
                         )
                     ),
                     client.V1Volume(
-                        name='pusher',
+                        name='config',
                         config_map=client.V1ConfigMapVolumeSource(
-                            name='pusher',
+                            name='files-config',
                             items=[
                                 client.V1KeyToPath(
-                                    key='script', path='script.py')
+                                    key='cli', path='cli.py')
                             ]
                         )
                     ),
