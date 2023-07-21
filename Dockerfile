@@ -1,4 +1,4 @@
-FROM dockerhub.qingcloud.com/qingtest/tink:base
+FROM mx2542/tink:base
 
 ENV KUBENETES_ENV=production
 
