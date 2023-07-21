@@ -70,7 +70,7 @@ class ChartValue(BaseModel):
 
     @validator('type')
     def check_type(cls, type):
-        if type not in ["aomaker", "hatbox"]:
+        if type not in ["aomaker", "hatbox",'hatboxd','aomakerd']:
             raise ValueError('Type must be aomaker or hatbox')
         return type
 
@@ -86,6 +86,7 @@ class PodValue(BaseModel):
     name: str
     uid: uuid.UUID
     cmd: Union[str, None] = None
+    container: Union[str, None] = 'hatbox'
     configmap: Union[ConfigMapValue, None] = None
 
     @validator('name')

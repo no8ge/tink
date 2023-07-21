@@ -9,10 +9,13 @@ from pprint import pprint
 @pytest.mark.usefixtures('init')
 class TestAomaker():
 
+    uid = '091143e5-464e-4704-8438-04ecc98f4b1a'
+    # uid = f'{uuid.uuid4()}'
+
     payload = {
         "type": "aomaker",
-        "name": f'aomaker-{uuid.uuid4()}',
-        "uid": f'{uuid.uuid4()}',
+        "name": f'aomaker-{uid}',
+        "uid": f'{uid}',
         'container': {
             'image': 'dockerhub.qingcloud.com/listen/hpc:4.0',
             'command': 'arun -e testbm -m hpc_fs',
@@ -50,7 +53,7 @@ class TestAomaker():
                 'container.name': 'aomaker',
             },
             "from_": 0,
-            "size": 100,
+            "size": 20,
         }
 
         resp = self.bs.post(
@@ -63,7 +66,7 @@ class TestAomaker():
         payload = {
             'index': 'logs',
             'key_words': {
-                'kubernetes.labels.uid': self.payload['uid']
+                'kubernetes.labels.uid': self.uid
             },
             "from_": 0,
             "size": 200,
@@ -84,6 +87,16 @@ class TestAomaker():
             f'{self.url}/files/report/result/aomaker/{self.name}',
         )
         pprint(resp.json())
+        assert resp.status_code == 200
+
+        while True:
+            resp = self.bs.get(
+                f'{self.url}/files/tasks/{self.name}',
+            )
+            pprint(resp.json())
+            if resp.json()['status'] == 'completed':
+                break
+            time.sleep(1)
         assert resp.status_code == 200
 
     def test_get_object(self):

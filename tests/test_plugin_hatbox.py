@@ -1,3 +1,4 @@
+import time
 import uuid
 import json
 import pytest
@@ -8,14 +9,16 @@ from pprint import pprint
 @pytest.mark.usefixtures('init')
 class TestHatbox():
     uid = '091143e5-464e-4704-8438-04ecc98f4b1a'
+    # uid = f'{uuid.uuid4()}'
 
     payload = {
         "uid": uid,
         "name": 'test',
         "type": "hatbox",
         'container': {
-            'image': 'dockerhub.qingcloud.com/qingtest/hatbox_base:1.0.1',
-            'command': 'python HATengine.py case -m 2 -t 3 -s test_auto_create_case_step',
+            'image': 'dockerhub.qingcloud.com/qingtest/hatbox_base:1.0.7',
+            # 'command': f'python HATengine.py case -m 2 -t 3 -s test_inter_boss_console_get > /hatbox/Log/logs/hatbox-{uid}.log; pip install loguru; sleep infinity',
+            'command': 'sleep infinity',
             'report': '/hatbox/Log/report/pytest_html',
         },
         'configmap': {
@@ -29,25 +32,20 @@ class TestHatbox():
             f'{self.url}/tink/v1.1/chart',
             json=self.payload
         )
-        assert resp.status_code == 200
-
-    def test_upgrade_chart(self):
-        resp = self.bs.patch(
-            f'{self.url}/tink/v1.1/chart',
-            json=self.payload
-        )
-        assert resp.status_code == 200
-
-    def test_uninstall_chart(self):
-        resp = self.bs.delete(
-            f'{self.url}/tink/v1.1/chart',
-            json=self.payload
-        )
+        pprint(resp.json())
         assert resp.status_code == 200
 
     def test_list_chart(self):
         resp = self.bs.get(
             f'{self.url}/tink/v1.1/charts',
+            json=self.payload
+        )
+        pprint(resp.json())
+        assert resp.status_code == 200
+
+    def test_upgrade_chart(self):
+        resp = self.bs.patch(
+            f'{self.url}/tink/v1.1/chart',
             json=self.payload
         )
         assert resp.status_code == 200
@@ -58,36 +56,17 @@ class TestHatbox():
             "name": 'test',
             "type": "hatbox",
         }
-        resp = self.bs.get(
-            f'{self.url}/tink/v1.1/pod',
-            json=payload
-        )
-        assert resp.status_code == 200
-
-    def test_delete_pod(self):
-        payload = {
-            "uid": self.uid,
-            "name": 'test',
-            "type": "hatbox",
-        }
-        resp = self.bs.delete(
-            f'{self.url}/tink/v1.1/pod',
-            json=payload
-        )
-        assert resp.status_code == 200
-
-    def test_exec(self):
-        payload = {
-            "uid": self.uid,
-            "name": 'test',
-            "type": "hatbox",
-            'cmd': 'echo 123'
-        }
-        resp = self.bs.post(
-            f'{self.url}/tink/v1.1/pod/exec',
-            json=payload
-        )
-        assert resp.status_code == 200
+        while True:
+            resp = self.bs.get(
+                f'{self.url}/tink/v1.1/pod',
+                json=payload
+            )
+            status = resp.json()['status']['phase']
+            pprint(status)
+            if status == 'Running':
+                break
+            time.sleep(3)
+            assert resp.status_code == 200
 
     def test_update_configmap(self):
         payload = {
@@ -105,12 +84,25 @@ class TestHatbox():
         )
         assert resp.status_code == 200
 
+    def test_exec(self):
+        payload = {
+            "uid": self.uid,
+            "name": 'test',
+            "type": "hatbox",
+            'cmd': 'python /atop/cli.py'
+        }
+        resp = self.bs.post(
+            f'{self.url}/tink/v1.1/pod/exec',
+            json=payload
+        )
+        pprint(resp.text)
+        assert resp.status_code == 200
+
     def test_msg(self):
-        label = self.payload['type'] + '-' + self.payload['uid']
         payload = {
             'index': 'logs',
             'key_words': {
-                'kubernetes.labels.app': label,
+                'log.file.path': f"/hatbox/Log/logs/hatbox-{self.uid}.log",
             },
             "from_": 0,
             "size": 20,
@@ -126,10 +118,10 @@ class TestHatbox():
         payload = {
             'index': 'logs',
             'key_words': {
-                'kubernetes.labels.app': label,
+                'log.file.path': f"/hatbox/Log/logs/hatbox-{self.uid}.log",
             },
             "from_": 0,
-            "size": 20,
+            "size": 200,
             "offset": resp.json()['offset']
         }
 
@@ -152,14 +144,46 @@ class TestHatbox():
             f'{self.url}/files/v1.1/report',
             json=payload
         )
+        pprint(resp.json())
         assert resp.status_code == 200
 
     def test_get_object(self):
         resp = self.bs.get(
             f'{self.url}/files/v1.1',
             params={
-                "prefix": f"{self.payload['type']}-{self.uid}/hatbox/Log/report/pytest_html/widgets/summary.json",
+                "prefix": f"hatbox-{self.uid}/hatbox/Log/report/pytest_html/widgets/summary.json",
                 'bucket_name': 'result'
             }
         )
+        pprint(resp.json())
+        assert resp.status_code == 200
+
+    def test_delete_pod(self):
+        payload = {
+            "uid": self.uid,
+            "name": 'test',
+            "type": "hatbox",
+        }
+        resp = self.bs.delete(
+            f'{self.url}/tink/v1.1/pod',
+            json=payload
+        )
+        assert resp.status_code == 200
+
+        while True:
+            resp = self.bs.get(
+                f'{self.url}/tink/v1.1/pod',
+                json=payload
+            )
+            pprint(resp.status_code)
+            if resp.status_code == 404:
+                break
+            time.sleep(3)
+
+    def test_uninstall_chart(self):
+        resp = self.bs.delete(
+            f'{self.url}/tink/v1.1/chart',
+            json=self.payload
+        )
+        pprint(resp.json())
         assert resp.status_code == 200

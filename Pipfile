@@ -68,6 +68,7 @@ aiohttp = "*"
 python_version = "3.10"
 
 [scripts]
-chart = "sh scripts/push-chart.sh"
-docker = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/tink:latest . --push"
+chart = "sh scripts/chart.sh"
+docker = "sh scripts/docker.sh"
+hatbox = "pipenv run pytest tests/test_hatbox.py -s -v"
 aomaker = "pipenv run pytest tests/test_aomaker.py -s -v"
