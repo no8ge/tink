@@ -7,7 +7,7 @@ from pprint import pprint
 
 
 @pytest.mark.usefixtures('init')
-class TestHatbox():
+class TestPluginHatbox():
     uid = '091143e5-464e-4704-8438-04ecc98f4b1a'
     # uid = f'{uuid.uuid4()}'
 

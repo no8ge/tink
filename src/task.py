@@ -29,6 +29,10 @@ class Task():
         return client.V1Container(
             name=self.task.type,
             image=self.task.container.image,
+            resources=client.V1ResourceRequirements(
+                requests={'cpu': '100m', 'memory': '100Mi'},
+                limits={'cpu': '500m', 'memory': '2000Mi'}
+            ),
             command=['bash'],
             args=[
                 "-c",
