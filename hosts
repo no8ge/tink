@@ -1,0 +1,325 @@
+127.0.0.1	localhost
+
+172.16.60.2  git.internal.yunify.com
+
+192.168.14.5 api.staging.com
+192.168.5.3 api.alphacloud.com
+
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+
+
+139.198.120.149 mail.qingcloud.com
+172.31.20.50	testing
+172.16.0.60 	npm.internal.yunify.com r.npm.internal.yunify.com
+172.16.80.2 goproxy.qingstor.dev
+192.168.5.3 console.alphacloud.com
+36.110.175.24 console.devopscloud.com
+139.198.124.26 gd2console.qingcloud.com gd2appcenter.qingcloud.com
+
+192.168.27.5 boss.testing.com 
+192.168.12.77 boss2.staging.com
+
+# testing hyper
+172.31.20.21 tr02n11
+172.31.20.10 tr02n00.mgmt.pitrix.yunify.com tr02n00
+172.31.20.10 tr02n00.user.pitrix.yunify.com
+172.31.20.11 tr02n01.mgmt.pitrix.yunify.com tr02n01
+172.31.20.11 tr02n01.user.pitrix.yunify.com
+172.31.20.12 tr02n02.mgmt.pitrix.yunify.com tr02n02
+172.31.20.13 tr02n03.mgmt.pitrix.yunify.com tr02n03
+#172.31.20.14 tr02n04.mgmt.pitrix.yunify.com tr02n04
+#172.31.20.14 tr02n04.user.pitrix.yunify.com
+#172.31.20.15 tr02n05.mgmt.pitrix.yunify.com tr02n05
+#172.31.20.15 tr02n05.user.pitrix.yunify.com
+172.31.20.16 tr02n06.mgmt.pitrix.yunify.com tr02n06
+172.31.20.16 tr02n06.user.pitrix.yunify.com
+172.31.20.17 tr02n07.mgmt.pitrix.yunify.com tr02n07
+172.31.20.17 tr02n07.user.pitrix.yunify.com
+#172.31.20.18 tr02n08.mgmt.pitrix.yunify.com tr02n08
+#172.31.20.18 tr02n08.user.pitrix.yunify.com
+#172.31.20.19 tr02n09.mgmt.pitrix.yunify.com tr02n09
+172.31.20.19 tr02n09.user.pitrix.yunify.com
+172.31.20.20 tr02n10.mgmt.pitrix.yunify.com tr02n10
+172.31.20.20 tr02n10.user.pitrix.yunify.com
+172.31.20.21 tr02n11.mgmt.pitrix.yunify.com tr02n11
+172.31.20.21 tr02n11.user.pitrix.yunify.com
+172.31.20.22 tr02n12.mgmt.pitrix.yunify.com tr02n12
+172.31.20.22 tr02n12.user.pitrix.yunify.com
+172.31.20.23 tr02n13.mgmt.pitrix.yunify.com tr02n13
+172.31.20.23 tr02n13.user.pitrix.yunify.com
+172.31.20.24 tr02n14.mgmt.pitrix.yunify.com tr02n14
+172.31.20.24 tr02n14.user.pitrix.yunify.com
+172.31.20.28 tr02n18.mgmt.pitrix.yunify.com tr02n18
+172.31.20.28 tr02n18.user.pitrix.yunify.com
+172.31.20.29 tr02n19.mgmt.pitrix.yunify.com tr02n19
+172.31.20.29 tr02n19.user.pitrix.yunify.com
+
+#192.168.168.45 tr02n20.mgmt.pitrix.yunify.com tr02n20
+#192.168.168.45 tr02n20.user.pitrix.yunify.com
+#192.168.168.46 tr02n21.mgmt.pitrix.yunify.com tr02n21
+#192.168.168.46 tr02n21.user.pitrix.yunify.com
+
+#192.168.168.98 tr02n20.mgmt.pitrix.yunify.com tr02n20
+#192.168.168.98 tr02n20.user.pitrix.yunify.com
+#192.168.168.99 tr02n21.mgmt.pitrix.yunify.com tr02n21
+#192.168.168.99 tr02n21.user.pitrix.yunify.com
+
+#192.168.168.47 tr02n22.mgmt.pitrix.yunify.com tr02n22
+#192.168.168.47 tr02n22.user.pitrix.yunify.com
+#192.168.168.48 tr02n23.mgmt.pitrix.yunify.com tr02n23
+#192.168.168.48 tr02n23.user.pitrix.yunify.com
+
+172.31.22.11 tr02n20.mgmt.pitrix.yunify.com tr02n20
+172.31.22.11 tr02n20.user.pitrix.yunify.com
+172.31.22.12 tr02n21.mgmt.pitrix.yunify.com tr02n21
+172.31.22.12 tr02n21.user.pitrix.yunify.com
+172.31.22.13 tr02n22.mgmt.pitrix.yunify.com tr02n22
+172.31.22.13 tr02n22.user.pitrix.yunify.com
+172.31.22.14 tr02n23.mgmt.pitrix.yunify.com tr02n23
+172.31.22.14 tr02n23.user.pitrix.yunify.com
+
+172.31.20.28 tr02n24.mgmt.pitrix.yunify.com tr02n24
+172.31.20.28 tr02n24.user.pitrix.yunify.com
+172.31.20.35 tr02n25.mgmt.pitrix.yunify.com tr02n25
+172.31.20.35 tr02n25.user.pitrix.yunify.com
+172.31.20.36 tr02n26.mgmt.pitrix.yunify.com tr02n26
+172.31.20.36 tr02n26.user.pitrix.yunify.com
+172.31.20.37 tr02n27.mgmt.pitrix.yunify.com tr02n27
+172.31.20.37 tr02n27.user.pitrix.yunify.com
+172.31.22.15 tr02n28.mgmt.pitrix.yunify.com tr02n28
+172.31.22.15 tr02n28.user.pitrix.yunify.com
+172.31.22.16 tr02n29.mgmt.pitrix.yunify.com tr02n29
+172.31.22.16 tr02n29.user.pitrix.yunify.com
+172.31.22.17 tr02n30.mgmt.pitrix.yunify.com tr02n30
+172.31.22.17 tr02n30.user.pitrix.yunify.com
+172.31.22.18 tr02n30.mgmt.pitrix.yunify.com tr02n31
+172.31.22.18 tr02n30.mgmt.pitrix.yunify.com
+172.31.22.19 tr02n32.mgmt.pitrix.yunify.com tr02n32
+172.31.22.19 tr02n32.user.pitrix.yunify.com
+#172.31.20.45 tr02n20.mgmt.pitrix.yunify.com tr02n20
+#172.31.20.45 tr02n20.user.pitrix.yunify.com
+#172.31.20.46 tr02n21.mgmt.pitrix.yunify.com tr02n21
+#172.31.20.46 tr02n21.user.pitrix.yunify.com
+#172.31.20.47 tr02n22.mgmt.pitrix.yunify.com tr02n22
+#172.31.20.47 tr02n22.user.pitrix.yunify.com
+#172.31.20.48 tr02n23.mgmt.pitrix.yunify.com tr02n23
+#172.31.20.48 tr02n23.user.pitrix.yunify.com
+172.31.8.99 tr02n99.mgmt.pitrix.yunify.com tr02n99
+172.31.8.99 tr02n99.user.pitrix.yunify.com
+
+172.31.31.30 tr12n30.mgmt.pitrix.yunify.com tr12n30
+172.31.31.30 tr12n30.user.pitrix.yunify.com
+
+# pek2
+139.198.124.26	pek2console.qingcloud.com	pek2.qingcloud.com	pek2appcenter.qingcloud.com
+139.198.124.26	pek2account.qingcloud.com
+
+# testbm
+# 192.168.20.12 console.testbmcloud.com
+
+# minio
+#139.198.15.7 minio-api.qingcloud.com
+############### private cloud ###############
+192.168.20.12 console.testbmcloud.com appcenter.testbmcloud.com api.testbmcloud.com docs.testbmcloud.com docsv3.testbmcloud.com docsv3em.testbmcloud.com
+192.168.20.12 cb0testbm1a.testbmcloud.com
+192.168.20.13 cb1testbm1a.testbmcloud.com
+192.168.20.12 boss.testbmcloud.com
+192.168.20.11 bm-fb
+
+### testepcloud ###
+192.168.31.3	console.testepcloud.com	appcenter.testepcloud.com	api.testepcloud.com	docs.testepcloud.com	docsv3.testepcloud.com	docsv3em.testepcloud.com
+
+
+### staging ###
+172.31.14.4 deltar02n04.mgmt.pitrix.yunify.com deltar02n04
+172.31.14.4 deltar02n04.user.pitrix.yunify.com
+172.31.14.5 deltar02n05.mgmt.pitrix.yunify.com deltar02n05
+172.31.14.5 deltar02n05.user.pitrix.yunify.com
+172.31.14.6 deltar02n06.mgmt.pitrix.yunify.com deltar02n06
+172.31.14.6 deltar02n06.user.pitrix.yunify.com
+172.31.14.7 deltar02n07.mgmt.pitrix.yunify.com deltar02n07
+172.31.14.7 deltar02n07.user.pitrix.yunify.com
+172.31.11.72 deltar02n08.mgmt.pitrix.yunify.com deltar02n08
+172.31.11.72 deltar02n08.user.pitrix.yunify.com
+172.31.11.73 deltar02n09.mgmt.pitrix.yunify.com deltar02n09
+172.31.11.73 deltar02n09.user.pitrix.yunify.com
+
+#-------qa环境------
+172.31.20.181 account.qacloud.com console.qacloud.com appcenter.qacloud.com api.qacloud.com docs.qacloud.com docsv3.qacloud.com docsv3em.qacloud.com cadmin.qacloud.com
+172.31.20.149 cb0qa1a.qacloud.com
+172.31.20.150 cb1qa1a.qacloud.com
+172.31.20.181 boss.qacloud.com
+172.31.34.165 cb0qa1b.qacloud.com
+172.31.34.166 cb1qa1b.qacloud.com  
+172.31.20.2 qa-fb
+
+172.31.20.14 qc1a01.mgmt.pitrix.yunify.com qc1a01
+172.31.20.15 qc1a02.mgmt.pitrix.yunify.com qc1a02
+172.31.20.16 qc1a03.mgmt.pitrix.yunify.com qc1a03
+172.31.20.16 qc1a03.user.pitrix.yunify.com
+172.31.20.17 qc1a04.mgmt.pitrix.yunify.com qc1a04
+172.31.20.17 qc1a04.user.pitrix.yunify.com
+172.31.20.18 qc1a05.mgmt.pitrix.yunify.com qc1a05
+172.31.20.18 qc1a05.user.pitrix.yunify.com
+172.31.20.19 qc1a06.mgmt.pitrix.yunify.com qc1a06
+172.31.20.19 qc1a06.user.pitrix.yunify.com
+172.31.20.20 qc1a07.mgmt.pitrix.yunify.com qc1a07
+172.31.20.20 qc1a07.user.pitrix.yunify.com
+172.31.20.21 qc1a08.mgmt.pitrix.yunify.com qc1a08
+172.31.20.21 qc1a08.user.pitrix.yunify.com
+172.31.34.150 qc1b01.mgmt.pitrix.yunify.com qc1b01
+172.31.34.151 qc1b02.mgmt.pitrix.yunify.com qc1b02
+172.31.34.152 qc1b03.mgmt.pitrix.yunify.com qc1b03
+172.31.34.152 qc1b03.user.pitrix.yunify.com
+172.31.34.153 qc1b04.mgmt.pitrix.yunify.com qc1b04
+172.31.34.153 qc1b04.user.pitrix.yunify.com
+172.31.34.154 qc1b05.mgmt.pitrix.yunify.com qc1b05
+172.31.34.154 qc1b05.user.pitrix.yunify.com
+172.31.34.155 qc1b06.mgmt.pitrix.yunify.com qc1b06
+172.31.34.155 qc1b06.user.pitrix.yunify.com
+172.31.34.156 qc1b07.mgmt.pitrix.yunify.com qc1b07
+172.31.34.156 qc1b07.user.pitrix.yunify.com
+172.31.34.157 qc1b08.mgmt.pitrix.yunify.com qc1b08
+172.31.34.157 qc1b08.user.pitrix.yunify.com
+172.31.34.158 qc1b09.mgmt.pitrix.yunify.com qc1b09
+172.31.34.158 qc1b09.user.pitrix.yunify.com
+172.31.20.10 tr02n00.mgmt.pitrix.yunify.com tr02n00
+172.31.20.10 tr02n00.user.pitrix.yunify.com
+172.31.20.11 tr02n01.mgmt.pitrix.yunify.com tr02n01
+172.31.20.11 tr02n01.user.pitrix.yunify.com
+
+# testbm
+10.16.11.111 testbm1a-bm0.mgmt.pitrix.yunify.com testbm1a-bm0
+10.16.11.112 testbm1a-bm1.mgmt.pitrix.yunify.com testbm1a-bm1
+10.16.11.113 testbm1a-boss0.mgmt.pitrix.yunify.com testbm1a-boss0
+10.16.11.114 testbm1a-boss1.mgmt.pitrix.yunify.com testbm1a-boss1
+10.16.11.229 testbm1a-cloudsat0.mgmt.pitrix.yunify.com testbm1a-cloudsat0
+10.16.11.230 testbm1a-cloudsat1.mgmt.pitrix.yunify.com testbm1a-cloudsat1
+10.16.11.115 testbm1a-dnsmaster0.mgmt.pitrix.yunify.com testbm1a-dnsmaster0
+10.16.11.116 testbm1a-dnsmaster1.mgmt.pitrix.yunify.com testbm1a-dnsmaster1
+10.16.11.108 testbm1a-hpc0.mgmt.pitrix.yunify.com testbm1a-hpc0
+10.16.11.109 testbm1a-hpc1.mgmt.pitrix.yunify.com testbm1a-hpc1
+10.16.11.117 testbm1a-influxdb0.mgmt.pitrix.yunify.com testbm1a-influxdb0
+10.16.11.118 testbm1a-proxy0.mgmt.pitrix.yunify.com testbm1a-proxy0
+10.16.11.119 testbm1a-proxy1.mgmt.pitrix.yunify.com testbm1a-proxy1
+10.16.11.232 testbm1a-scs0.mgmt.pitrix.yunify.com testbm1a-scs0
+10.16.11.233 testbm1a-scs1.mgmt.pitrix.yunify.com testbm1a-scs1
+10.16.11.225 testbm1a-smc0.mgmt.pitrix.yunify.com testbm1a-smc0
+10.16.11.226 testbm1a-smc1.mgmt.pitrix.yunify.com testbm1a-smc1
+10.16.11.94 testbm1a-vmwaremanager0.mgmt.pitrix.yunify.com testbm1a-vmwaremanager0
+10.16.11.95 testbm1a-vmwaremanager1.mgmt.pitrix.yunify.com testbm1a-vmwaremanager1
+10.16.11.127 testbm1a-warehouse0.mgmt.pitrix.yunify.com testbm1a-warehouse0
+10.16.11.128 testbm1a-warehouse1.mgmt.pitrix.yunify.com testbm1a-warehouse1
+10.16.11.120 testbm1a-webservice0.mgmt.pitrix.yunify.com testbm1a-webservice0
+10.16.11.121 testbm1a-webservice1.mgmt.pitrix.yunify.com testbm1a-webservice1
+10.16.11.122 testbm1a-zoocassa0.mgmt.pitrix.yunify.com testbm1a-zoocassa0
+10.16.11.123 testbm1a-zoocassa1.mgmt.pitrix.yunify.com testbm1a-zoocassa1
+10.16.11.124 testbm1a-zoocassa2.mgmt.pitrix.yunify.com testbm1a-zoocassa2
+172.31.68.10 testbm2a-dnsmaster0.mgmt.pitrix.yunify.com testbm2a-dnsmaster0
+172.31.68.11 testbm2a-dnsmaster1.mgmt.pitrix.yunify.com testbm2a-dnsmaster1
+172.31.68.12 testbm2a-pgpool0.mgmt.pitrix.yunify.com testbm2a-pgpool0
+172.31.68.13 testbm2a-pgpool1.mgmt.pitrix.yunify.com testbm2a-pgpool1
+172.31.68.15 testbm2a-proxy0.mgmt.pitrix.yunify.com testbm2a-proxy0
+172.31.68.16 testbm2a-proxy1.mgmt.pitrix.yunify.com testbm2a-proxy1
+172.31.68.17 testbm2a-webservice0.mgmt.pitrix.yunify.com testbm2a-webservice0
+172.31.68.18 testbm2a-webservice1.mgmt.pitrix.yunify.com testbm2a-webservice1
+172.31.68.19 testbm2a-zoocassa0.mgmt.pitrix.yunify.com testbm2a-zoocassa0
+172.31.68.20 testbm2a-zoocassa1.mgmt.pitrix.yunify.com testbm2a-zoocassa1
+172.31.68.21 testbm2a-zoocassa2.mgmt.pitrix.yunify.com testbm2a-zoocassa2
+172.31.68.2 testbm2ar01n00.mgmt.pitrix.yunify.com testbm2ar01n00
+172.31.68.3 testbm2ar01n01.mgmt.pitrix.yunify.com testbm2ar01n01
+172.31.68.4 testbm2ar01n02.mgmt.pitrix.yunify.com testbm2ar01n02
+172.31.68.4 testbm2ar01n02.user.pitrix.yunify.com
+172.31.68.32 testbm2ar01n03.mgmt.pitrix.yunify.com testbm2ar01n03
+172.31.68.32 testbm2ar01n03.user.pitrix.yunify.com
+172.31.68.33 testbm2ar01n04.mgmt.pitrix.yunify.com testbm2ar01n04
+172.31.68.33 testbm2ar01n04.user.pitrix.yunify.com
+172.31.68.34 testbm2ar01n05.mgmt.pitrix.yunify.com testbm2ar01n05
+172.31.68.34 testbm2ar01n05.user.pitrix.yunify.com
+10.16.11.91 testbmr01n00.mgmt.pitrix.yunify.com testbmr01n00
+10.16.11.91 testbmr01n00.user.pitrix.yunify.com
+10.16.11.92 testbmr01n01.mgmt.pitrix.yunify.com testbmr01n01
+10.16.11.93 testbmr01n02.mgmt.pitrix.yunify.com testbmr01n02
+10.16.11.96 testbmr01n05.mgmt.pitrix.yunify.com testbmr01n05
+10.16.11.96 testbmr01n05.user.pitrix.yunify.com
+10.16.11.97 testbmr01n06.mgmt.pitrix.yunify.com testbmr01n06
+10.16.11.97 testbmr01n06.user.pitrix.yunify.com
+10.16.11.125 testbmr01n07.mgmt.pitrix.yunify.com testbmr01n07
+10.16.11.125 testbmr01n07.user.pitrix.yunify.com
+10.16.11.126 testbmr01n08.mgmt.pitrix.yunify.com testbmr01n08
+10.16.11.126 testbmr01n08.user.pitrix.yunify.com
+10.16.11.143 testbmr01n09.mgmt.pitrix.yunify.com testbmr01n09
+10.16.11.143 testbmr01n09.user.pitrix.yunify.com
+10.16.11.144 testbmr01n10.mgmt.pitrix.yunify.com testbmr01n10
+10.16.11.144 testbmr01n10.user.pitrix.yunify.com
+10.16.11.145 testbmr01n11.mgmt.pitrix.yunify.com testbmr01n11
+10.16.11.145 testbmr01n11.user.pitrix.yunify.com
+10.16.11.220 testbmr01n12.mgmt.pitrix.yunify.com testbmr01n12
+10.16.11.220 testbmr01n12.user.pitrix.yunify.com
+10.16.11.221 testbmr01n13.mgmt.pitrix.yunify.com testbmr01n13
+10.16.11.221 testbmr01n13.user.pitrix.yunify.com
+10.16.11.222 testbmr01n14.mgmt.pitrix.yunify.com testbmr01n14
+10.16.11.222 testbmr01n14.user.pitrix.yunify.com
+10.16.11.92 testbmr01n01 testbm1a-pgpool0
+10.16.11.93 testbmr01n02 testbm1a-pgpool1
+10.16.11.92 testbmr01n01 testbm1a-pgserver0
+10.16.11.93 testbmr01n02 testbm1a-pgserver1
+172.31.68.2 testbm2ar01n00 testbm2a-pgserver0
+
+# atop
+172.16.60.10 tink.com
+
+
+# hostname loopback address
+127.0.0.1	i-a9sr3y72
+
+
+# pftest 高可用
+172.31.11.137 console.pftestcloud.com appcenter.pftestcloud.com api.pftestcloud.com docs.pftestcloud.com docsv3.pftestcloud.com docsv3em.pftestcloud.com
+172.31.11.128 cb0pftest.pftestcloud.com
+172.31.11.133 cb1pftest.pftestcloud.com
+172.31.11.137 boss.pftestcloud.com
+
+# dsrycloud 高可用切换测试环境
+# gloabl 1a
+172.31.47.52 console.dsrycloud.com appcenter.dsrycloud.com api.dsrycloud.com docs.dsrycloud.com docsv3.dsrycloud.com docsv3em.dsrycloud.com
+172.31.47.52 boss.dsrycloud.com
+# global 2a
+# 172.31.47.74 console.dsrycloud.com appcenter.dsrycloud.com api.dsrycloud.com docs.dsrycloud.com docsv3.dsrycloud.com docsv3em.dsrycloud.com
+# 172.31.47.74 boss.dsrycloud.com
+192.168.12.77  boss2.dsrycloud.com 
+172.31.47.118 cb0dsry3a.dsrycloud.com
+172.31.47.119 cb1dsry3a.dsrycloud.com
+172.31.47.51      dsry1glb-fb
+172.31.47.81      dsry2glb-fb
+172.31.47.111     dsry3-fb
+
+172.31.197.107 console.xc2cloud.com appcenter.xc2cloud.com api.xc2cloud.com docs.xc2cloud.com docsembed.xc2cloud.com cadmin.xc2cloud.com
+172.31.197.124 cb0xc2a.xc2cloud.com
+172.31.197.125 cb1xc2a.xc2cloud.com
+172.31.197.107 boss.xc2cloud.com boss-docs.xc2cloud.com grafana.xc2cloud.com
+
+
+172.31.197.100 xc2n00.mgmt.pitrix.yunify.com xc2n00
+172.31.197.101 xc2n01.mgmt.pitrix.yunify.com xc2n01
+172.31.197.102 xc2n02.mgmt.pitrix.yunify.com xc2n02
+172.31.197.102 xc2n02.user.pitrix.yunify.com
+172.31.197.103 xc2n03.mgmt.pitrix.yunify.com xc2n03
+172.31.197.103 xc2n03.user.pitrix.yunify.com
+172.31.197.104 xc2n04.mgmt.pitrix.yunify.com xc2n04
+172.31.197.104 xc2n04.user.pitrix.yunify.com
+172.31.197.105 xc2n05.mgmt.pitrix.yunify.com xc2n05
+172.31.197.105 xc2n05.user.pitrix.yunify.com
+172.31.197.106 xc2n06.mgmt.pitrix.yunify.com xc2n06
+172.31.197.106 xc2n06.user.pitrix.yunify.com
+
+
+# kubekey hosts BEGIN
+172.16.60.10  autotest.cluster.local autotest
+172.16.60.3  worker-001.cluster.local worker-001
+172.16.60.10  lb.kubesphere.local
+# kubekey hosts END

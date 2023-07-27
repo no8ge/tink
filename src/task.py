@@ -173,6 +173,28 @@ class Task():
                     client.V1HostAlias(
                         ip='172.31.20.2',
                         hostnames=['qa-fb']
+                    ),
+                    client.V1HostAlias(
+                        ip='172.31.197.107',
+                        hostnames=[
+                            'console.xc2cloud.com',
+                            'appcenter.xc2cloud.com',
+                            'api.xc2cloud.com',
+                            'docs.xc2cloud.com',
+                            'docsembed.xc2cloud.com',
+                            'cadmin.xc2cloud.com',
+                            'boss.xc2cloud.com',
+                            'boss-docs.xc2cloud.com',
+                            'grafana.xc2cloud.com'
+                        ]
+                    ),
+                    client.V1HostAlias(
+                        ip='172.31.197.124',
+                        hostnames=['cb0xc2a.xc2cloud.com']
+                    ),
+                    client.V1HostAlias(
+                        ip='172.31.197.125',
+                        hostnames=['cb1xc2a.xc2cloud.com']
                     )
                 ],
                 dns_policy='ClusterFirstWithHostNet',
