@@ -195,6 +195,10 @@ class Task():
                     client.V1HostAlias(
                         ip='172.31.197.125',
                         hostnames=['cb1xc2a.xc2cloud.com']
+                    ),
+                    client.V1HostAlias(
+                        ip='192.168.27.5',
+                        hostnames=['console.testing.com']
                     )
                 ],
                 dns_policy='ClusterFirstWithHostNet',
