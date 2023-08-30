@@ -29,10 +29,6 @@ class Task():
         return client.V1Container(
             name=self.task.type,
             image=self.task.container.image,
-            # resources=client.V1ResourceRequirements(
-            #     requests={'cpu': '100m', 'memory': '100Mi'},
-            #     limits={'cpu': '2000m', 'memory': '4000Mi'}
-            # ),
             command=['bash'],
             args=[
                 "-c",
@@ -98,110 +94,7 @@ class Task():
                 init_containers=[],
                 containers=[self.worker()],
                 # host_network=True,
-                host_aliases=[
-                    client.V1HostAlias(
-                        ip='192.168.20.11',
-                        hostnames=[
-                            'bm-fb'
-                        ]
-                    ),
-                    client.V1HostAlias(
-                        ip='192.168.20.12',
-                        hostnames=[
-                            'console.testbmcloud.com',
-                            'appcenter.testbmcloud.com',
-                            'api.testbmcloud.com',
-                            'docs.testbmcloud.com',
-                            'docsv3.testbmcloud.com',
-                            'docsv3em.testbmcloud.com'
-                            'boss.testbmcloud.com',
-                            'cb0testbm1a.testbmcloud.com'
-                        ]
-                    ),
-                    client.V1HostAlias(
-                        ip='192.168.20.13',
-                        hostnames=[
-                            'cb1testbm1a.testbmcloud.com'
-                        ]
-                    ),
-                    client.V1HostAlias(
-                        ip='192.168.31.3',
-                        hostnames=[
-                            'console.testepcloud.com',
-                            'appcenter.testepcloud.com',
-                            'api.testepcloud.com',
-                            'docs.testepcloud.com',
-                            'docsv3.testepcloud.com',
-                            'docsv3em.testepcloud.com'
-                        ]
-                    ),
-                    client.V1HostAlias(
-                        ip='172.31.20.181',
-                        hostnames=[
-                            'account.qacloud.com',
-                            'console.qacloud.com',
-                            'appcenter.qacloud.com',
-                            'api.qacloud.com',
-                            'docs.qacloud.com',
-                            'docsv3.qacloud.com',
-                            'docsv3em.qacloud.com',
-                            'cadmin.qacloud.com'
-                        ]
-                    ),
-                    client.V1HostAlias(
-                        ip='172.31.20.149',
-                        hostnames=[
-                            'cb0qa1a.qacloud.com'
-                        ]
-                    ),
-                    client.V1HostAlias(
-                        ip='172.31.20.150',
-                        hostnames=['cb1qa1a.qacloud.com']
-                    ),
-                    client.V1HostAlias(
-                        ip='172.31.20.181',
-                        hostnames=['boss.qacloud.com']
-                    ),
-                    client.V1HostAlias(
-                        ip='172.31.20.165',
-                        hostnames=['cb0qa1b.qacloud.com']
-                    ),
-                    client.V1HostAlias(
-                        ip='172.31.20.166',
-                        hostnames=['cb1qa1b.qacloud.com']
-                    ),
-                    client.V1HostAlias(
-                        ip='172.31.20.2',
-                        hostnames=['qa-fb']
-                    ),
-                    client.V1HostAlias(
-                        ip='172.31.197.107',
-                        hostnames=[
-                            'console.xc2cloud.com',
-                            'appcenter.xc2cloud.com',
-                            'api.xc2cloud.com',
-                            'docs.xc2cloud.com',
-                            'docsembed.xc2cloud.com',
-                            'cadmin.xc2cloud.com',
-                            'boss.xc2cloud.com',
-                            'boss-docs.xc2cloud.com',
-                            'grafana.xc2cloud.com'
-                        ]
-                    ),
-                    client.V1HostAlias(
-                        ip='172.31.197.124',
-                        hostnames=['cb0xc2a.xc2cloud.com']
-                    ),
-                    client.V1HostAlias(
-                        ip='172.31.197.125',
-                        hostnames=['cb1xc2a.xc2cloud.com']
-                    ),
-                    client.V1HostAlias(
-                        ip='192.168.27.5',
-                        hostnames=['console.testing.com']
-                    )
-                ],
-                dns_policy='ClusterFirstWithHostNet',
+                # dns_policy='ClusterFirstWithHostNet',
                 restart_policy='Never',
                 image_pull_secrets=[
                     client.V1LocalObjectReference(
