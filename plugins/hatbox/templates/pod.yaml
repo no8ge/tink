@@ -7,7 +7,7 @@ metadata:
 spec:
   imagePullSecrets:
     - name: regcred
-  restartPolicy: OnFailure
+  restartPolicy: Always
   containers:
     - name: "{{ .Chart.Name }}"
       image: "{{ .Values.container.image }}"
@@ -54,6 +54,30 @@ spec:
         - "-e"
         - "-E"
         - "http.enabled=true"
+      livenessProbe:
+        exec:
+          command:
+            - sh
+            - -c
+            - |
+              #!/usr/bin/env bash -e
+              curl --fail 127.0.0.1:5066
+        failureThreshold: 3
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 5
+      readinessProbe:
+        exec:
+          command:
+            - sh
+            - -c
+            - |
+              #!/usr/bin/env bash -e
+              filebeat test output
+        failureThreshold: 3
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 5
       securityContext:
         runAsUser: 0
         privileged: false
@@ -79,7 +103,7 @@ spec:
           - key: filebeat.yml
             path: filebeat.yml
     - name: config-cli
-      configMap:  
+      configMap:
         name: "{{ .Chart.Name }}-{{ .Release.Name }}-cli"
         items:
           - key: cli.py
