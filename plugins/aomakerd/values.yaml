@@ -1,4 +1,0 @@
-container:
-  image: "dockerhub.qingcloud.com/qingtest/qke-cases:1.0.3"
-  command: "pip install minio; arun -e qingcloud testcases/test_api/qke/test_cluster.py::TestCluster --region sh1 --zone sh1a"
-  report: /data/autotest/reports

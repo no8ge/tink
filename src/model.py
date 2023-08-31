@@ -70,8 +70,8 @@ class ChartValue(BaseModel):
 
     @validator('type')
     def check_type(cls, type):
-        if type not in ["aomaker", "hatbox",'hatboxd','aomakerd']:
-            raise ValueError('Type must be aomaker or hatbox')
+        if type not in ["aomaker", "hatbox", 'jmeter', 'locust']:
+            raise ValueError('Type must be in [aomaker hatbox jmeter locust]')
         return type
 
     @validator('configmap')
@@ -109,8 +109,8 @@ class PodValue(BaseModel):
 
     @validator('type')
     def check_type(cls, type):
-        if type not in ["aomaker", "hatbox"]:
-            raise ValueError('Type must be aomaker or hatbox')
+        if type not in ["aomaker", "hatbox", 'jmeter', 'locust']:
+            raise ValueError('Type must be in [aomaker hatbox jmeter locust]')
         return type
 
     @validator('configmap')
