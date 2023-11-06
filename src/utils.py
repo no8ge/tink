@@ -65,7 +65,7 @@ def exec_cmd(cmd, output=None):
         if output == 'json':
             outs = json.loads(outs)
         resp = {'outs': outs, 'errs': errs}
-        logger.info(resp)
+        # logger.info(resp)
         return resp
     except subprocess.CalledProcessError as e:
         logger.error(e)

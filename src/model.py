@@ -29,4 +29,4 @@ class PodModel(BaseModel):
     name: str
     cmd: Union[str, None] = None
     container: Union[str, None] = None
-    namespace: str
+    namespace: str = None
