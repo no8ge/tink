@@ -57,6 +57,10 @@ class Chart():
         cmd = f'helm list {self._namespace_arg} -o json'
         return exec_cmd(cmd, output='json')
 
+    def search(self):
+        cmd = f'helm search repo {self.chart} -o json --versions'
+        return exec_cmd(cmd, output='json')
+
 
 class Repo():
     def __init__(self, ro: RepoModel) -> None:

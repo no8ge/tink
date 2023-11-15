@@ -157,6 +157,19 @@ async def get_chart(ct: ChartModel):
         raise HTTPException(status_code=500, detail='内部错误')
 
 
+@app.get("/v1.0/charts")
+async def get_chart(ct: ChartModel):
+    logger.info(ct)
+    try:
+        result = Chart(ct).search()
+        return result
+    except HelmError as e:
+        raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
+
+
 @app.get("/v1.0/proxy/pod")
 async def get_pod(pod: PodModel):
     logger.info(pod)

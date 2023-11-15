@@ -64,6 +64,14 @@ class TestTink():
         pprint(resp.json())
         assert resp.status_code == 200
 
+    def test_get_charts(self):
+        resp = self.bs.get(
+            f'{self.url}/v1.0/charts',
+            json=self.ct,
+        )
+        pprint(resp.json())
+        assert resp.status_code == 200
+
     def test_install_chart(self):
         resp = self.bs.post(
             f'{self.url}/v1.0/chart',
