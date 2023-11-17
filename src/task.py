@@ -42,10 +42,10 @@ class Task():
                     mount_path='/atop/cli.py',
                     sub_path='cli.py'
                 ),
-                client.V1VolumeMount(
-                    name='share-volume',
-                    mount_path='/report',
-                )
+                # client.V1VolumeMount(
+                #     name='share-volume',
+                #     mount_path='/report',
+                # )
             ],
             env=[
                 client.V1EnvVar(
@@ -123,12 +123,12 @@ class Task():
                             ]
                         )
                     ),
-                    client.V1Volume(
-                        name='share-volume',
-                        persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
-                            claim_name='data-atop-reports'
-                        )
-                    ),
+                    # client.V1Volume(
+                    #     name='share-volume',
+                    #     persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
+                    #         claim_name='data-atop-reports'
+                    #     )
+                    # ),
                 ]
             )
         )

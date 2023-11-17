@@ -42,8 +42,8 @@ spec:
           readOnly: true
           mountPath: /atop/cli.py
           subPath: cli.py
-        - name: share
-          mountPath: /report
+        # - name: share
+        #   mountPath: /report
         - name: data
           mountPath: /hatbox/data
         - name: cache
@@ -108,9 +108,9 @@ spec:
         items:
           - key: cli.py
             path: cli.py
-    - name: share
-      persistentVolumeClaim:
-        claimName: data-atop-reports
+    # - name: share
+    #   persistentVolumeClaim:
+    #     claimName: data-atop-reports
     - name: data
       persistentVolumeClaim:
         claimName: "{{ .Chart.Name }}-{{ .Release.Name }}"
