@@ -18,7 +18,7 @@ spec:
         - "sh"
         - "-c"
       args:
-        - "{{ .Values.container.command }}; sleep 36000"
+        - "{{ .Values.container.command }}"
       imagePullPolicy: Always
       env:
         - name: REPORT
