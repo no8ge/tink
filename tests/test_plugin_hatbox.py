@@ -89,7 +89,7 @@ class TestPluginHatbox():
             "uid": self.uid,
             "name": 'test',
             "type": "hatbox",
-            'cmd': 'python HATengine.py case -m 2 -t 3 -s test_inter_boss_console_get > /hatbox/Log/logs/hatbox-{uid}.log; python /atop/cli.py'
+            'cmd': f'python HATengine.py case -m 2 -t 3 -s test_inter_boss_console_get > /hatbox/Log/logs/hatbox-{self.uid}.log; python /atop/cli.py'
         }
         resp = self.bs.post(
             f'{self.url}/tink/v1.1/pod/exec',
