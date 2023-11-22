@@ -8,8 +8,9 @@ from pprint import pprint
 
 @pytest.mark.usefixtures('init')
 class TestPluginHatbox():
+
+    uid = f'{uuid.uuid4()}'
     uid = '091143e5-464e-4704-8438-04ecc98f4b1a'
-    # uid = f'{uuid.uuid4()}'
 
     payload = {
         "uid": uid,
@@ -17,7 +18,6 @@ class TestPluginHatbox():
         "type": "hatbox",
         'container': {
             'image': 'dockerhub.qingcloud.com/qingtest/hatbox_base:1.0.7',
-            # 'command': f'python HATengine.py case -m 2 -t 3 -s test_inter_boss_console_get > /hatbox/Log/logs/hatbox-{uid}.log; pip install loguru; sleep infinity',
             'command': 'sleep infinity',
             'report': '/hatbox/Log/report/pytest_html',
         },
@@ -89,7 +89,7 @@ class TestPluginHatbox():
             "uid": self.uid,
             "name": 'test',
             "type": "hatbox",
-            'cmd': 'python /atop/cli.py'
+            'cmd': f'python HATengine.py case -m 2 -t 3 -s test_inter_boss_console_get > /hatbox/Log/logs/hatbox-{self.uid}.log; python /atop/cli.py'
         }
         resp = self.bs.post(
             f'{self.url}/tink/v1.1/pod/exec',

@@ -34,8 +34,6 @@ spec:
           readOnly: true
           mountPath: /atop/cli.py
           subPath: cli.py
-        - name: share-volume
-          mountPath: /report
   volumes:
   - name: config
     configMap:
@@ -43,6 +41,4 @@ spec:
       items:
         - key: cli
           path: cli.py
-  - name: share-volume
-    persistentVolumeClaim:
-      claimName: data-atop-reports
+

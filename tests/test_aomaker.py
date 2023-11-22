@@ -9,8 +9,8 @@ from pprint import pprint
 @pytest.mark.usefixtures('init')
 class TestAomaker():
 
-    # uid = '091143e5-464e-4704-8438-04ecc98f4b1a'
     uid = f'{uuid.uuid4()}'
+    # uid = '091143e5-464e-4704-8438-04ecc98f4b1a'
 
     payload = {
         "type": "aomaker",
@@ -18,7 +18,7 @@ class TestAomaker():
         "uid": f'{uid}',
         'container': {
             'image': 'dockerhub.qingcloud.com/listen/hpc:4.0',
-            'command': 'arun -e testbm -m hpc_fs',
+            'command': 'arun -e qingcloud -m hpc_fs',
         },
         'prefix': '/data/autotest/reports'
     }
