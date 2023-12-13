@@ -1,4 +1,5 @@
 import json
+import yaml
 import traceback
 from loguru import logger
 
@@ -49,6 +50,33 @@ async def startup_event():
         pass
     except Exception as e:
         logger.debug(e)
+
+
+@app.get("/v1.0/version")
+async def version():
+    try:
+        with open('chart/Chart.yaml') as f:
+            chart = yaml.safe_load(f)
+            del chart['apiVersion']
+            chart_json = json.dumps(chart)
+            logger.info(chart_json)
+        return chart_json
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
+
+
+@app.get("/v1.0/metrics")
+async def add_repo(repo: RepoModel):
+    logger.info(repo)
+    try:
+        result = Repo(repo).add()
+        return result
+    except HelmError as e:
+        raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
 
 
 @app.post("/v1.0/repo")

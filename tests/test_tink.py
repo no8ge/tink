@@ -32,6 +32,13 @@ class TestTink():
         'namespace': 'default'
     }
 
+    def test_get_version(self):
+        resp = self.bs.get(
+            f'{self.url}/v1.0/version'
+        )
+        pprint(resp.json())
+        assert resp.status_code == 200
+
     def test_add_repo(self):
         resp = self.bs.post(
             f'{self.url}/v1.0/repo',
@@ -48,7 +55,7 @@ class TestTink():
         pprint(resp.json())
         assert resp.status_code == 200
 
-    def test_upgrade_repo(self):
+    def test_update_repo(self):
         resp = self.bs.patch(
             f'{self.url}/v1.0/repo',
             json=self.ro,

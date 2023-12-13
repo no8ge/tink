@@ -6,8 +6,8 @@ metadata:
   labels:
     app:  "{{ .Release.Name }}"
   annotations:
-    prometheus.io/scrape: 'false'
-    prometheus.io/path: '/tink/metrics'
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/v1.0/metrics'
     prometheus.io/port: '8003'
 spec:
   selector:
@@ -34,10 +34,10 @@ spec:
       labels:
         app:  "{{ .Release.Name }}"
     spec:
-      imagePullSecrets:
-        - name: regcred
+      # imagePullSecrets:
+      #   - name: regcred
       containers:
-        - name:  "{{ .Chart.Name }}"
+        - name:  "{{ .Release.Name }}"
           image: "{{ .Values.registry }}/{{ .Values.repository }}/{{ .Values.image }}:{{ .Chart.AppVersion}}"
           command:
             - "uvicorn"
@@ -53,4 +53,4 @@ spec:
           imagePullPolicy: Always
           env:
             - name: NAMESPACE
-              value: {{ .Release.Namespace | quote }}
+              value: "{{ .Release.Namespace }}"

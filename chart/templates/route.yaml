@@ -1,14 +1,14 @@
 ---
-apiVersion: apisix.apache.org/v2beta3
+apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
   name: "{{ .Release.Name }}"
 spec:
   http:
-    - name: tink
+    - name: "{{ .Release.Name }}"
       match:
         paths:
-          - /tink/*
+          - /{{ .Release.Name }}/*
         methods:
           - GET
           - POST
@@ -28,15 +28,15 @@ spec:
           enable: true
           config:
             regex_uri:
-              - /tink/*
-              - /*
+              - /{{ .Release.Name }}/*
+              - /
       websocket: true
       backends:
         - serviceName: "{{ .Release.Name }}"
           servicePort: 8003
 
 ---
-apiVersion: apisix.apache.org/v2beta3
+apiVersion: apisix.apache.org/v2
 kind: ApisixUpstream
 metadata:
   name: "{{ .Release.Name }}"
