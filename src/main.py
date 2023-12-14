@@ -67,7 +67,7 @@ async def version():
 
 
 @app.get("/v1.0/metrics")
-async def add_repo(repo: RepoModel):
+async def metrics(repo: RepoModel):
     logger.info(repo)
     try:
         result = Repo(repo).add()
