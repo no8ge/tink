@@ -24,6 +24,7 @@ spec:
           enable: true
           config:
             key: admin
+            header: Authorization
         - name: proxy-rewrite
           enable: true
           config:
