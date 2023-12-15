@@ -9,26 +9,27 @@ from pprint import pprint
 @pytest.mark.usefixtures('init')
 class TestTink():
 
-    uid = f'{uuid.uuid4()}'
-
-    ct = {
-        'release': 'test',
-        'chart': 'dev-demo',
-        'repo': 'atop',
-        'namespace': 'default',
-        'version': '1.0.0',
-        'value': None
-    }
+    uid = str(uuid.uuid4())
+    uid = '278a0e0f-08a4-47b1-a4a8-582b21fcf694'
 
     ro = {
         'name': 'test',
         'url': 'https://no8ge.github.io/chartrepo/'
     }
 
+    ct = {
+        'release': uid,
+        'chart': 'pytest',
+        'repo': 'test',
+        'namespace': 'default',
+        'version': '1.0.0',
+        'value': {'command': 'pytest --html=report/report.html -s -v; sleep 3600'}
+    }
+
     pd = {
-        'name': 'test-pod',
+        'name': uid,
         'cmd': 'ls',
-        'container': 'busybox',
+        'container': 'pytest',
         'namespace': 'default'
     }
 
@@ -71,14 +72,6 @@ class TestTink():
         pprint(resp.json())
         assert resp.status_code == 200
 
-    def test_get_charts(self):
-        resp = self.bs.get(
-            f'{self.url}/v1.0/charts',
-            json=self.ct,
-        )
-        pprint(resp.json())
-        assert resp.status_code == 200
-
     def test_install_chart(self):
         resp = self.bs.post(
             f'{self.url}/v1.0/chart',
@@ -90,6 +83,14 @@ class TestTink():
     def test_get_chart(self):
         resp = self.bs.get(
             f'{self.url}/v1.0/chart',
+            json=self.ct,
+        )
+        pprint(resp.json())
+        assert resp.status_code == 200
+
+    def test_get_charts(self):
+        resp = self.bs.get(
+            f'{self.url}/v1.0/charts',
             json=self.ct,
         )
         pprint(resp.json())

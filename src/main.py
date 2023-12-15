@@ -67,13 +67,9 @@ async def version():
 
 
 @app.get("/v1.0/metrics")
-async def metrics(repo: RepoModel):
-    logger.info(repo)
+async def metrics():
     try:
-        result = Repo(repo).add()
-        return result
-    except HelmError as e:
-        raise HTTPException(status_code=e.status, detail=e.reason)
+        pass
     except Exception as e:
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail='内部错误')
@@ -136,8 +132,6 @@ async def install_chart(ct: ChartModel):
     logger.info(ct)
     try:
         result = Chart(ct).install()
-        del result['outs']['manifest']
-        del result['outs']['chart']
         return result
     except HelmError as e:
         raise HTTPException(status_code=e.status, detail=e.reason)
