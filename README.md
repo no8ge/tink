@@ -63,7 +63,7 @@ curl -X POST -H "Content-Type: application/json" -H "Authorization: admin" http:
             "status":"deployed"
         },
         "config":{
-            "command":"pytest --html=report/report.html -s -v; sleep 3600"
+            "command":"pytest --html=report/report.html -s -v"
         },
         "version":1,
         "namespace":"default"
