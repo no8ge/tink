@@ -48,7 +48,7 @@ curl -X POST -H "Content-Type: application/json" -H "Authorization: admin" http:
   "repo": "test",
   "namespace": "default",
   "version": "1.0.0",
-  "value": {"command": "pytest --html=report/index.html -s -v; sleep 3600"}
+  "value": {"command": "pytest --html=report/index.html -s -v"}
 }'
 
 # response:
