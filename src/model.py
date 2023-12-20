@@ -1,128 +1,40 @@
 import re
 import uuid
-from typing import Optional, Union
-from pydantic import BaseModel, validator
+from typing import Optional, Union, Dict
+from pydantic import AnyHttpUrl, BaseModel, constr, validator
+from dataclasses import dataclass
 
 
-class Container(BaseModel):
-    image: str
-    command: str
+class RepoModel(BaseModel):
+    name: constr(min_length=2, max_length=16)
+    url: AnyHttpUrl
+    label: Optional[Dict[str, str]] = None
 
 
-class Task(BaseModel):
-    type: str
+class ChartModel(BaseModel):
+    release: str
+    chart: str
+    repo: str
+    namespace: str = 'default'
+    version: str = None
+    value: Optional[Dict[str, str]] = None
+
+    @validator('repo')
+    def name_must_be_str(cls, v):
+        assert isinstance(v, str), 'must be a string'
+        return v
+
+    @validator('release')
+    def validate_release_uuid(cls, value):
+        try:
+            uuid.UUID(value)
+            return value
+        except ValueError:
+            raise ValueError("release must be uuid string")
+
+
+class PodModel(BaseModel):
     name: str
-    uid: Union[str, uuid.UUID]
-    container: Container
-    prefix: Union[str, None] = None
-
-    @validator('name')
-    def check_name(cls, name):
-        if len(name) > 253:
-            raise ValueError('Name must not exceed 253 characters')
-        elif not re.match(r'^[a-z0-9][a-z0-9\-\.]*[a-z0-9]$', name):
-            raise ValueError(
-                'Name must start and end with a lowercase letter or number and contain only lowercase letters, numbers, dash (-), and dot (.)')
-        return name
-
-    @validator('type')
-    def check_type(cls, type):
-        if type not in ["aomaker", "hatbox"]:
-            raise ValueError('Type must be aomaker or hatbox')
-        return type
-
-
-class ContainerValue(BaseModel):
-    image: str
-    command: str
-    report: str
-
-
-class ConfigMapValue(BaseModel):
-    testbed: dict
-    testcases: dict
-
-
-class ChartValue(BaseModel):
-    type: str
-    name: str
-    uid: uuid.UUID
-    container: ContainerValue
-    configmap: Union[ConfigMapValue, None] = None
-
-    @validator('name')
-    def check_name(cls, name):
-        if len(name) > 253:
-            raise ValueError('Name must not exceed 253 characters')
-        elif not re.match(r'^[a-z0-9][a-z0-9\-\.]*[a-z0-9]$', name):
-            raise ValueError(
-                'Name must start and end with a lowercase letter or number and contain only lowercase letters, numbers, dash (-), and dot (.)')
-        return name
-
-    @validator('uid')
-    def check_uid(cls, uid):
-        if not isinstance(uid, uuid.UUID):
-            try:
-                uid = uuid.UUID(uid)
-            except:
-                raise ValueError('Invalid UUID')
-        return uid
-
-    @validator('type')
-    def check_type(cls, type):
-        if type not in ["aomaker", "hatbox", 'jmeter', 'locust']:
-            raise ValueError('Type must be in [aomaker hatbox jmeter locust]')
-        return type
-
-    @validator('configmap')
-    def check_configmap(cls, configmap):
-        if type == "hatbox" and configmap == None:
-            raise ValueError('Configmap must not be None')
-        return configmap
-
-
-class PodValue(BaseModel):
-    type: str
-    name: str
-    uid: uuid.UUID
     cmd: Union[str, None] = None
-    container: Union[str, None] = 'hatbox'
-    configmap: Union[ConfigMapValue, None] = None
-
-    @validator('name')
-    def check_name(cls, name):
-        if len(name) > 253:
-            raise ValueError('Name must not exceed 253 characters')
-        elif not re.match(r'^[a-z0-9][a-z0-9\-\.]*[a-z0-9]$', name):
-            raise ValueError(
-                'Name must start and end with a lowercase letter or number and contain only lowercase letters, numbers, dash (-), and dot (.)')
-        return name
-
-    @validator('uid')
-    def check_uid(cls, uid):
-        if not isinstance(uid, uuid.UUID):
-            try:
-                uid = uuid.UUID(uid)
-            except:
-                raise ValueError('Invalid UUID')
-        return uid
-
-    @validator('type')
-    def check_type(cls, type):
-        if type not in ["aomaker", "hatbox", 'jmeter', 'locust']:
-            raise ValueError('Type must be in [aomaker hatbox jmeter locust]')
-        return type
-
-    @validator('configmap')
-    def check_configmap(cls, configmap):
-        if type == "hatbox" and configmap == None:
-            raise ValueError('Configmap must not be None')
-        return configmap
-
-
-class LogValue(BaseModel):
-    pod: str
-    container: str
-    tail_lines: Optional[int] = None
-    follow: Optional[bool] = False
-    _preload_content: Optional[bool] = True
+    container: Union[str, None] = None
+    namespace: str = None
