@@ -82,9 +82,12 @@ async def create_job(task: TK):
         del result['spec']
         logger.info(result)
         return result
-    except Exception as e:
+    except ApiException as e:
         logger.error(e.body)
         raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
 
 
 @app.get("/tink/job/{name}")
@@ -95,9 +98,12 @@ async def get_job(name):
         del result['spec']
         logger.info(result)
         return result
-    except Exception as e:
+    except ApiException as e:
         logger.error(e.body)
         raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
 
 
 @app.delete("/tink/job/{name}")
@@ -108,9 +114,12 @@ async def delete_job(name):
         del result['spec']
         logger.info(result)
         return result
-    except Exception as e:
+    except ApiException as e:
         logger.error(e.body)
         raise HTTPException(status_code=e.status, detail=e.reason)
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
 
 
 @app.post("/tink/v1.1/chart")
